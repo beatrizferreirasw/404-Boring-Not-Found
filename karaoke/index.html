@@ -27,6 +27,7 @@
     <button class="btn" type="button" id="setup-btn" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span class="hide-sm" data-i18n="k.setup">Song setup</span></button>
     <button class="btn lang" data-lang-toggle type="button">PT</button>
     <button class="btn icon" data-mute-toggle type="button"></button>
+    <button class="btn icon" type="button" id="fs-btn" data-i18n-attr="aria-label:k.fullscreen; title:k.fullscreen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
   </header>
 
   <main class="karaoke">
@@ -93,6 +94,7 @@
       <div class="start-actions">
         <button class="btn primary big" type="button" id="start-play" data-i18n="k.startShow" hidden>▶ Start the show</button>
       </div>
+      <p class="start-tv" data-i18n-html="k.tvTip"></p>
       <p class="start-foot" id="start-foot"></p>
     </div>
   </div>

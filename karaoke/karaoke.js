@@ -213,6 +213,7 @@
     const d = player.duration;
     const playing = player.playing;
     document.body.classList.toggle("playing", playing);
+    if (!playing && document.body.classList.contains("idle")) document.body.classList.remove("idle");
     $("play").setAttribute("aria-label", tr(playing ? "k.pause" : "k.play"));
 
     setCurrent(indexAt(t));
@@ -277,12 +278,48 @@
   }
 
   document.addEventListener("keydown", (e) => {
-    if (e.target.closest("input, textarea, select, button, label, [contenteditable]") && e.code === "Space") return;
+    if (e.target.closest("input, textarea, [contenteditable]")) return;
+    if (e.key === "f" || e.key === "F") { toggleFullscreen(); return; }
+    if (e.target.closest("button, select, label") && e.code === "Space") return;
     if ($("setup").open || !$("reveal").hidden) return;
     if (e.code === "Space" || e.key === "k") { e.preventDefault(); togglePlay(); }
     else if (e.key === "ArrowRight") player.seek(player.time + 5);
     else if (e.key === "ArrowLeft") player.seek(player.time - 5);
+    else if (e.key === "m" || e.key === "M") { audio.muted = !audio.muted; updateVolIcon(); }
   });
+
+  /* ---------------- TV mode: full screen + controls that hide while singing */
+  const fsBtn = $("fs-btn");
+  const FS_ENTER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>';
+  const FS_EXIT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>';
+  function toggleFullscreen() {
+    if (!document.fullscreenEnabled) return;
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    else document.documentElement.requestFullscreen().catch(() => {});
+  }
+  function updateFsButton() {
+    const on = !!document.fullscreenElement;
+    fsBtn.innerHTML = on ? FS_EXIT : FS_ENTER;
+    fsBtn.setAttribute("aria-label", tr(on ? "k.exitFullscreen" : "k.fullscreen"));
+    fsBtn.setAttribute("title", tr(on ? "k.exitFullscreen" : "k.fullscreen"));
+  }
+  if (document.fullscreenEnabled) {
+    fsBtn.addEventListener("click", toggleFullscreen);
+    document.addEventListener("fullscreenchange", updateFsButton);
+  } else {
+    fsBtn.hidden = true; // e.g. iPhone Safari
+  }
+
+  let idleTimer = 0;
+  function wake() {
+    document.body.classList.remove("idle");
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => {
+      const busy = $("setup").open || !$("reveal").hidden || !$("start").hidden || syncing;
+      if (player.playing && !busy) document.body.classList.add("idle");
+    }, 3000);
+  }
+  ["pointermove", "pointerdown", "keydown", "touchstart", "wheel"].forEach((ev) => addEventListener(ev, wake, { passive: true }));
 
   /* guitar-neck progress bar: real fret spacing, inlay dots */
   function buildFrets() {
@@ -308,7 +345,7 @@
   }
 
   $("start-song").textContent = `“${SONG.title}”`;
-  $("start-play").addEventListener("click", () => { sfx.click(); hideStart(); resetGame(); player.play(); });
+  $("start-play").addEventListener("click", () => { sfx.click(); hideStart(); resetGame(); player.play(); setTimeout(wake, 450); });
 
   /* ============================================================= setup */
   const dlg = $("setup");
@@ -484,7 +521,7 @@
 
   // When the language is switched mid-game, refresh the bits built in JavaScript.
   document.addEventListener("langchange", () => {
-    refreshStart(); updateVolIcon();
+    refreshStart(); updateVolIcon(); updateFsButton();
     if (!lines.length) renderLyrics();
     if (!$("stage-3").hidden) showRevealText();
     if (syncing) updateSync();
