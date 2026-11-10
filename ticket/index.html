@@ -61,9 +61,8 @@
         const when = new Date(item.unlockedAt).toLocaleDateString(locale(), { day: "numeric", month: "long", year: "numeric" });
         document.getElementById("meta").textContent = t("tk.meta", { serial: item.serial, date: when }) + (item.score ? t("tk.best", { score: item.score.toLocaleString(locale()) }) : "");
         actions.innerHTML = `
-          <button class="btn gold" type="button" id="print">${t("tk.print")}</button>
+          <a class="btn gold" href="../${cfg.portrait}" download="caricatura.png">${t("tk.download")}</a>
           <a class="btn" href="../karaoke/" data-nav>${t("tk.again")}</a>`;
-        document.getElementById("print").addEventListener("click", () => window.print());
         Arcade.wireLinks(actions);
       }
       render();
