@@ -66,9 +66,22 @@ class Handler(SimpleHTTPRequestHandler):
         self._remaining = None
 
 
+class Server(ThreadingHTTPServer):
+    # The default queue of 5 waiting connections overflows when a page loads many files while
+    # music is streaming, and the browser then sees "connection reset". Allow plenty.
+    request_queue_size = 128
+    daemon_threads = True
+
+    def handle_error(self, request, client_address):
+        # the browser cancelling a download (e.g. seeking in the MP3) is normal: don't print a traceback
+        if isinstance(sys.exc_info()[1], (BrokenPipeError, ConnectionResetError)):
+            return
+        super().handle_error(request, client_address)
+
+
 if __name__ == "__main__":
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 8000
-    server = ThreadingHTTPServer(("127.0.0.1", port), partial(Handler, directory=ROOT))
+    server = Server(("127.0.0.1", port), partial(Handler, directory=ROOT))
     print(f"Serving {ROOT} at http://localhost:{port}  (Ctrl+C to stop)")
     try:
         server.serve_forever()

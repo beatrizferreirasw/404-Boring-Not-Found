@@ -1,7 +1,7 @@
 /* ==========================================================================
    Run to the Stage — a 3-lane runner through the Coliseu Porto.
    Dad (a 3D model built in code, based on his portrait: bald, big smile,
-   black western shirt with red rose-embroidered yoke) runs down the main aisle of the Art Deco hall. Jump chairs and amps, slide
+   black western shirt with red rose-embroidered yoke) runs down the main aisle of the Art Deco hall. Jump chairs, flight cases and saxes, slide
    under keyboards, dodge drum kits and speaker columns, collect guitar picks.
    Reach the stage and he smashes his guitar. Uses three.js (assets/vendor/three.min.js, r128).
    ========================================================================== */
@@ -628,6 +628,19 @@
     g.fillStyle = "#1a1a1a"; g.textAlign = "center"; g.font = "bold 44px 'Bebas Neue', Impact, sans-serif"; g.fillText("SULTANS", 128, 142);
   });
   const sparkleRed = std(0xa3101f, { metalness: 0.6, roughness: 0.35 });
+  const caseTex = canvasTex(512, 256, (g, w, h) => {
+    g.fillStyle = "#141416"; g.fillRect(0, 0, w, h); noise(g, w, h, 0.08, 2500);
+    g.fillStyle = "#f4f2ec"; g.textAlign = "center";
+    g.font = "bold 58px 'Bebas Neue', Impact, sans-serif"; g.fillText("DIRE STRAITS", w / 2, 108);
+    g.font = "bold 30px 'Space Mono', monospace"; g.fillText("WORLD TOUR · FRAGILE", w / 2, 158);
+    g.fillRect(40, 186, w - 80, 6);
+    g.font = "bold 24px 'Space Mono', monospace"; g.fillText("STAGE LEFT  ▲  THIS WAY UP", w / 2, 226);
+  });
+  const sheetTex = canvasTex(128, 96, (g, w, h) => {
+    g.fillStyle = "#f6f0de"; g.fillRect(0, 0, w, h); g.strokeStyle = "#333"; g.lineWidth = 1;
+    for (let st = 0; st < 3; st++) for (let l = 0; l < 5; l++) { const y = 12 + st * 28 + l * 4; g.beginPath(); g.moveTo(6, y); g.lineTo(w - 6, y); g.stroke(); }
+    g.fillStyle = "#222"; for (let n = 0; n < 18; n++) { const x = 12 + (n % 6) * 18, y = 12 + Math.floor(n / 6) * 28 + (n * 7 % 5) * 3; g.beginPath(); g.ellipse(x, y, 3, 2.2, -0.4, 0, 7); g.fill(); g.fillRect(x + 2, y - 10, 1, 10); }
+  });
   const headMat = std(0xf3efe6, { roughness: 0.6 });
   function shadowsOn(g) { g.traverse((o) => { if (o.isMesh) o.castShadow = true; }); return g; }
 
@@ -685,17 +698,63 @@
       }
       return { g: shadowsOn(g), w: 0.95, d: 0.4, y0: 0, y1: 0.95 };
     },
-    // vintage tweed guitar amp: jump
-    amp: () => {
+    // black-and-white concert flight case on castors: jump
+    case: () => {
       const g = new THREE.Group();
-      mesh(box(1.5, 0.8, 0.55), std(0xffffff, { map: tweed, roughness: 0.85 }), 0, 0.4, 0, g);
-      mesh(box(1.32, 0.5, 0.02), std(0x5b4027, { roughness: 0.95 }), 0, 0.33, -0.28, g);
-      mesh(box(1.5, 0.12, 0.02), std(0xc9a24e, { metalness: 0.7, roughness: 0.35 }), 0, 0.71, -0.28, g);
-      for (let k = 0; k < 6; k++) mesh(cyl(0.028, 0.028, 0.03, 12), std(0x111111), -0.5 + k * 0.2, 0.71, -0.3, g).rotation.x = Math.PI / 2;
-      mesh(new THREE.TorusGeometry(0.15, 0.025, 8, 16, Math.PI), std(0x2a1a10), 0, 0.8, 0, g);
-      for (const x of [-0.74, 0.74]) mesh(box(0.04, 0.82, 0.57), std(0x2a1a10), x, 0.4, 0, g);
-      mesh(sph(0.025), glow(0xff3b30), 0.62, 0.71, -0.3, g);
-      return { g: shadowsOn(g), w: 0.9, d: 0.35, y0: 0, y1: 0.9 };
+      const alu = std(0xc9ced4, { metalness: 0.9, roughness: 0.35 });
+      mesh(box(1.6, 0.74, 0.62), std(0xffffff, { map: caseTex, roughness: 0.6 }), 0, 0.5, 0, g);
+      for (const y of [0.13, 0.87]) mesh(box(1.64, 0.05, 0.66), alu, 0, y, 0, g);          // aluminium edges
+      for (const x of [-0.8, 0.8]) mesh(box(0.05, 0.78, 0.66), alu, x, 0.5, 0, g);
+      for (const x of [-0.79, 0.79]) for (const y of [0.14, 0.86]) for (const z of [-0.31, 0.31]) mesh(sph(0.045, 10, 8), chromeM, x, y, z, g); // ball corners
+      for (const x of [-0.45, 0.45]) mesh(box(0.12, 0.08, 0.03), chromeM, x, 0.78, -0.33, g); // latches
+      mesh(new THREE.TorusGeometry(0.1, 0.018, 6, 14, Math.PI), std(0x111111), 0, 0.9, 0, g);  // handle
+      for (const x of [-0.65, 0.65]) for (const z of [-0.22, 0.22]) { mesh(cyl(0.06, 0.06, 0.04, 12), std(0x111111), x, 0.06, z, g).rotation.z = Math.PI / 2; }
+      return { g: shadowsOn(g), w: 0.9, d: 0.4, y0: 0, y1: 0.92 };
+    },
+    // jazz corner: saxophone and trumpet on their stands, music stand: jump
+    sax: () => {
+      const g = new THREE.Group();
+      const brassM = std(0xd9b04a, { metalness: 1, roughness: 0.28 });
+      // sax stand (tripod) + alto saxophone
+      for (const a of [0, 2.1, 4.2]) { const l = mesh(cyl(0.01, 0.01, 0.4, 6), blackM, -0.35 + Math.cos(a) * 0.1, 0.16, Math.sin(a) * 0.1, g); l.rotation.set(Math.sin(a) * 0.5, 0, -Math.cos(a) * 0.5); }
+      const sax = new THREE.Group(); sax.position.set(-0.35, 0.28, 0); g.add(sax);
+      const tube = new THREE.CatmullRomCurve3([new THREE.Vector3(0.05, 0.62, 0), new THREE.Vector3(0, 0.35, 0), new THREE.Vector3(0, 0.08, 0), new THREE.Vector3(0.08, -0.02, 0), new THREE.Vector3(0.16, 0.06, 0)]);
+      mesh(new THREE.TubeGeometry(tube, 24, 0.045, 10), brassM, 0, 0, 0, sax);
+      mesh(cyl(0.11, 0.05, 0.16, 18, ), brassM, 0.2, 0.14, 0, sax).rotation.z = -0.3;           // bell
+      mesh(new THREE.TorusGeometry(0.035, 0.012, 6, 12), brassM, 0.09, 0.66, 0, sax);           // neck crook
+      for (let k = 0; k < 6; k++) mesh(cyl(0.016, 0.016, 0.012, 10), std(0xf1e7c9, { roughness: 0.3 }), -0.045, 0.15 + k * 0.07, -0.02, sax).rotation.z = Math.PI / 2; // keys
+      // trumpet resting on a small stand
+      mesh(cyl(0.012, 0.012, 0.45, 6), blackM, 0.4, 0.22, 0, g);
+      const tr = new THREE.Group(); tr.position.set(0.4, 0.5, 0); tr.rotation.z = Math.PI / 2; g.add(tr);
+      mesh(cyl(0.018, 0.018, 0.42, 10), brassM, 0, 0, 0, tr);
+      mesh(cyl(0.075, 0.018, 0.14, 16, 1), brassM, 0, 0.27, 0, tr);
+      for (let k = 0; k < 3; k++) mesh(cyl(0.012, 0.012, 0.08, 8), brassM, 0.03, -0.05 + k * 0.035, 0, tr).rotation.z = Math.PI / 2;
+      // music stand with a page of notes
+      mesh(cyl(0.01, 0.01, 0.8, 6), blackM, 0.02, 0.4, 0.15, g);
+      const desk = mesh(box(0.42, 0.3, 0.012), std(0xffffff, { map: sheetTex, roughness: 0.8 }), 0.02, 0.85, 0.13, g); desk.rotation.x = -0.35;
+      return { g: shadowsOn(g), w: 0.9, d: 0.3, y0: 0, y1: 0.95 };
+    },
+    // upright double bass on its stand, with a stool: change lane
+    bass: () => {
+      const g = new THREE.Group();
+      const wood = std(0x7a3a16, { roughness: 0.4, metalness: 0.05 });
+      const bassShape = new THREE.Shape();
+      bassShape.moveTo(0, -0.55);
+      bassShape.bezierCurveTo(0.34, -0.55, 0.38, -0.2, 0.3, -0.05); bassShape.bezierCurveTo(0.22, 0.05, 0.22, 0.12, 0.26, 0.22);
+      bassShape.bezierCurveTo(0.3, 0.4, 0.18, 0.5, 0, 0.5); bassShape.bezierCurveTo(-0.18, 0.5, -0.3, 0.4, -0.26, 0.22);
+      bassShape.bezierCurveTo(-0.22, 0.12, -0.22, 0.05, -0.3, -0.05); bassShape.bezierCurveTo(-0.38, -0.2, -0.34, -0.55, 0, -0.55);
+      const body = mesh(new THREE.ExtrudeGeometry(bassShape, { depth: 0.2, bevelEnabled: true, bevelSize: 0.02, bevelThickness: 0.02, curveSegments: 20 }), wood, 0, 0.72, -0.1, g);
+      body.rotation.x = -0.12;
+      for (const sx of [-1, 1]) mesh(box(0.02, 0.16, 0.01), blackM, sx * 0.1, 0.78, -0.12, g).rotation.z = sx * 0.2;   // f-holes
+      mesh(box(0.06, 0.75, 0.05), std(0x1a0f08, { roughness: 0.4 }), 0, 1.6, -0.05, g);         // fingerboard
+      mesh(new THREE.TorusGeometry(0.05, 0.02, 6, 12), wood, 0, 2.02, -0.03, g);                // scroll
+      mesh(box(0.14, 0.02, 0.02), std(0xe8dcc0), 0, 0.62, -0.13, g);                             // bridge
+      for (let k = 0; k < 4; k++) mesh(cyl(0.002, 0.002, 1.35, 4), chromeM, -0.03 + k * 0.02, 1.25, -0.12, g);
+      mesh(cyl(0.012, 0.012, 0.2, 6), chromeM, 0, 0.1, -0.05, g);                                // end pin
+      // bar stool beside it
+      mesh(cyl(0.18, 0.18, 0.06, 18), std(0x8a1626, { roughness: 0.9 }), 0.62, 0.78, 0.05, g);
+      for (const a of [0.5, 2.6, 4.7]) { const l = mesh(cyl(0.015, 0.015, 0.78, 6), chromeM, 0.62 + Math.cos(a) * 0.12, 0.38, 0.05 + Math.sin(a) * 0.12, g); l.rotation.set(Math.sin(a) * 0.15, 0, -Math.cos(a) * 0.15); }
+      return { g: shadowsOn(g), w: 0.95, d: 0.45, y0: 0, y1: 2.1 };
     },
     // keyboard on a tall stand across the lane: slide under it
     keys: () => {
@@ -734,9 +793,10 @@
         return;
       }
       const o = OBST[kind](); o.g.position.set(lane * LANE, 0, z); worldGrp.add(o.g);
+      o.g.rotation.y = Math.PI; // models are built facing -z; turn them to face the oncoming runner
       world.push(Object.assign(o, { kind, lane, z, hit: false }));
     };
-    const JUMP = ["chairs", "amp"], SLIDE = ["keys"], DODGE = ["drums", "speakers"];
+    const JUMP = ["chairs", "case", "sax"], SLIDE = ["keys"], DODGE = ["drums", "speakers", "bass"];
     let z = -50;
     while (z > STAGE_Z + 34) {
       const p = -z / LENGTH;
@@ -748,17 +808,19 @@
         if (rand() < 0.55 + p * 0.35) { add(pool[Math.floor(rand() * pool.length)], lane, z); placed++; }
       }
       // sometimes the free lane gets something jumpable/slidable too (never a lane-blocker)
-      if (placed === 2 && rand() < 0.25 + p * 0.3) add(rand() < 0.5 ? JUMP[Math.floor(rand() * 2)] : "keys", free, z);
+      if (placed === 2 && rand() < 0.25 + p * 0.3) add(rand() < 0.5 ? JUMP[Math.floor(rand() * JUMP.length)] : "keys", free, z);
       for (let k = 0; k < 5; k++) add("pick", free, z + 6 + k * 2, 1.0);
-      if (rand() < 0.35) { // an arc of picks over chairs or an amp elsewhere
+      if (rand() < 0.35) { // an arc of picks over something jumpable elsewhere
         const lane = [-1, 0, 1][Math.floor(rand() * 3)];
         if (!world.some((o) => o.kind !== "pick" && o.lane === lane && Math.abs(o.z - (z - 9)) < 4)) {
-          add(JUMP[Math.floor(rand() * 2)], lane, z - 9);
+          add(JUMP[Math.floor(rand() * JUMP.length)], lane, z - 9);
           for (let k = -2; k <= 2; k++) add("pick", lane, z - 9 + k * 1.3, 2.2 - Math.abs(k) * 0.35);
         }
       }
       z -= 26 - 9 * p + rand() * 5;
     }
+    // a little row of picks under every keyboard: only reachable by sliding
+    for (const o of world.filter((w) => w.kind === "keys")) for (let k = -1; k <= 1; k++) add("pick", o.lane, o.z + k * 0.9, 0.45);
   }
 
   /* ============================================================ state */
@@ -766,7 +828,7 @@
     mode: "intro",   // intro | count | run | paused | win | over
     z: 6, x: 0, lane: 0, y: 0, vy: 0, slide: 0, speed: SPEED0,
     lives: LIVES, picks: 0, time: 0, invuln: 0, slow: 1, phase: 0, t: 0, endT: 0, shake: 0,
-    grabbed: false, wound: false, smashed: false,
+    grabbed: false, wound: false, smashed: false, tossed: false,
   };
   const BEST_KEY = "run-best";
 
@@ -791,12 +853,12 @@
     dad.head.rotation.set(0, 0, 0);
     [...dad.hips, ...dad.knees, ...dad.shoulders, ...dad.elbows].forEach((j) => j.rotation.set(0, 0, 0));
     clearDebris(); gtrOnStand(); grip.position.set(0, 0, 0); grip.rotation.set(0, 0, 0);
-    S.grabbed = false; S.smashed = false;
+    S.grabbed = false; S.smashed = false; S.wound = false; S.tossed = false; stageGtr.visible = true;
   }
 
   function reset() {
     buildCourse();
-    Object.assign(S, { z: 6, x: 0, lane: 0, y: 0, vy: 0, slide: 0, speed: SPEED0, lives: LIVES, picks: 0, time: 0, invuln: 0, slow: 1, endT: 0, shake: 0, grabbed: false, wound: false, smashed: false });
+    Object.assign(S, { z: 6, x: 0, lane: 0, y: 0, vy: 0, slide: 0, speed: SPEED0, lives: LIVES, picks: 0, time: 0, invuln: 0, slow: 1, endT: 0, shake: 0, grabbed: false, wound: false, smashed: false, tossed: false });
     resetPose(); dad.root.position.set(0, 0, S.z);
     curtains.forEach((c) => (c.g.position.x = c.s * 6.5));
     stageLight.intensity = 0;
@@ -907,7 +969,7 @@
     for (const o of world) {
       const dz = Math.abs(o.z - S.z);
       if (o.kind === "pick") {
-        if (!o.got && dz < 0.7 && Math.abs(o.g.position.x - S.x) < 0.9 && o.y > bottom - 0.3 && o.y < bottom + top + 0.2) {
+        if (!o.got && dz < 0.7 && Math.abs(o.g.position.x - S.x) < 0.9 && o.y > bottom - 0.3 && o.y < bottom + top + 0.45) {
           o.got = true; o.g.visible = false; S.picks++; $("picks").textContent = String(S.picks); sfx.hover(); sfx.click();
         }
         continue;
@@ -990,6 +1052,24 @@
       lean = 0.22 - 0.7 * p; crouch = 0.6 * p;
     } else if (t < 2.7) {                            // impact — hold the pose
       lean = -0.48; crouch = 0.6;
+    } else if (t >= 3.6) {                           // toss the neck away, arms down… and dance
+      if (!S.tossed) {
+        S.tossed = true;
+        const at = new THREE.Vector3(); stageGtr.getWorldPosition(at);
+        stageGtr.visible = false;
+        const neck = mesh(box(0.06, 0.6, 0.05), shardWood, at.x, at.y, at.z, debrisGrp); neck.castShadow = true;
+        debris.push({ m: neck, v: new THREE.Vector3(-2.5, 3, 1.2), spin: new THREE.Vector3(6, 2, 9), life: Infinity });
+        sfx.whoosh();
+      }
+      if (t < 4.1) {
+        const p = ease(seg(t, 3.6, 4.1));
+        setJ(dad.shoulders[0], 0.1, 0, -0.1, p); setJ(dad.shoulders[1], 0.1, 0, 0.1, p);
+        setJ(dad.elbows[0], 0.25, 0, 0, p); setJ(dad.elbows[1], 0.25, 0, 0, p);
+        dad.body.rotation.set(0, 0, 0); dad.body.position.y = 0;
+        [...dad.hips, ...dad.knees].forEach((j) => setJ(j, 0, 0, 0, k));
+        dad.head.rotation.set(0, 0, 0);
+      } else poseDance(t - 4.1, dt);
+      return;
     } else {                                         // triumph: the broken neck held high, fist pumping
       const p = ease(seg(t, 2.7, 3.2)), b = Math.abs(Math.sin((t - 2.7) * 7));
       grip.rotation.x = 0.45 + (Math.PI - 0.45) * p;
@@ -1008,12 +1088,47 @@
       setTimeout(() => { sfx.fanfare(); sfx.cheer(); }, 250);
       setTimeout(() => fx.rain({ count: 220 }), 600);
     }
-    if (S.grabbed) armsTo(grip.position, k, t >= 2.7 ? 1 : undefined);
+    if (S.grabbed && !S.tossed) armsTo(grip.position, k, t >= 2.7 ? 1 : undefined);
     dad.body.rotation.set(lean, 0, 0);
     if (!(t >= 2.7)) dad.body.position.y = -crouch * 0.12;
     setJ(hL, crouch * 0.6, 0, 0, k); setJ(hR, crouch * 0.6, 0, 0, k);
     setJ(kL, -crouch * 1.1, 0, 0, k); setJ(kR, -crouch * 1.1, 0, 0, k);
     dad.head.rotation.set(t > 2.7 ? -0.25 : 0.1, 0, 0);
+  }
+
+  // dance routine on stage, facing the hall (~134 bpm, Money for Nothing tempo)
+  function poseDance(d, dt) {
+    const k = Math.min(1, dt * 10), beat = d * 2.23 * Math.PI;
+    const [hL, hR] = dad.hips, [kL, kR] = dad.knees, [sL, sR] = dad.shoulders, [eL, eR] = dad.elbows;
+    const cycle = d % 12, bounce = Math.abs(Math.sin(beat));
+    let spin = 0;
+    dad.body.position.set(0, -bounce * 0.05, 0);
+    setJ(hL, 0.2 * bounce, 0, 0, k); setJ(hR, 0.2 * bounce, 0, 0, k);
+    setJ(kL, -0.4 * bounce, 0, 0, k); setJ(kR, -0.4 * bounce, 0, 0, k);
+    dad.head.rotation.set(0.1 * Math.sin(beat * 2), 0, 0);
+    if (cycle < 4) {                          // groove: hips sway, elbows pumping
+      dad.body.rotation.z = Math.sin(beat) * 0.1;
+      dad.body.position.x = Math.sin(beat) * 0.05;
+      setJ(sL, 0.5 + 0.45 * Math.sin(beat), 0, -0.25, k); setJ(sR, 0.5 - 0.45 * Math.sin(beat), 0, 0.25, k);
+      setJ(eL, 1.6, 0, 0, k); setJ(eR, 1.6, 0, 0, k);
+    } else if (cycle < 5.6) {                 // spin with arms out
+      const p = (cycle - 4) / 1.6; spin = ease(p) * Math.PI * 2;
+      dad.body.rotation.z = 0;
+      setJ(sL, 0, 0, -1.35, k); setJ(sR, 0, 0, 1.35, k); setJ(eL, 0.2, 0, 0, k); setJ(eR, 0.2, 0, 0, k);
+    } else if (cycle < 9.2) {                 // disco point, other hand on the hip
+      const up = Math.sin(beat / 2) > 0;
+      dad.body.rotation.z = up ? -0.12 : 0.08;
+      setJ(sR, up ? 0.4 : 0.6, 0, up ? 2.5 : 0.3, k); setJ(eR, up ? 0.1 : 0.4, 0, 0, k);
+      setJ(sL, -0.3, 0, -0.7, k); setJ(eL, 1.9, 0, 0, k);
+    } else {                                  // fists pumping in the air
+      const a = Math.sin(beat) > 0;
+      dad.body.rotation.z = 0;
+      dad.body.position.y = Math.abs(Math.sin(beat)) * 0.08;
+      setJ(sL, 2.9, 0, -0.3 - (a ? 0.2 : 0), k); setJ(sR, 2.9, 0, 0.3 + (a ? 0 : 0.2), k);
+      setJ(eL, a ? 0.9 : 0.3, 0, 0, k); setJ(eR, a ? 0.3 : 0.9, 0, 0, k);
+    }
+    dad.body.rotation.x = 0; dad.body.rotation.y = 0;
+    dad.root.rotation.y = Math.PI + spin;
   }
 
   function step(dt) {
