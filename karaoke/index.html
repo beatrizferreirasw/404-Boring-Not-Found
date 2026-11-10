@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Sing It! · Dire Straits Karaoke</title>
+  <meta name="theme-color" content="#070b1d">
+  <link rel="icon" href="../assets/art/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=Monoton&family=Outfit:wght@400;600;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/collectible.css">
+  <link rel="stylesheet" href="karaoke.css">
+</head>
+<body data-title-key="title.karaoke">
+  <!-- ======= atmosphere: a rainy South London night outside the pub ======= -->
+  <div class="scene" aria-hidden="true">
+    <div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div>
+    <canvas id="rain"></canvas>
+    <div class="window-frame"></div>
+  </div>
+
+  <header class="topbar">
+    <a class="btn" href="../" data-nav data-i18n-attr="aria-label:nav.back">← <span class="hide-sm" data-i18n="nav.arcade">Arcade</span></a>
+    <span class="spacer"></span>
+    <button class="btn" type="button" id="setup-btn" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span class="hide-sm" data-i18n="k.setup">Song setup</span></button>
+    <button class="btn lang" data-lang-toggle type="button">PT</button>
+    <button class="btn icon" data-mute-toggle type="button"></button>
+  </header>
+
+  <main class="karaoke">
+    <!-- The song title and the lyrics always stay in the original English. -->
+    <div class="sign" aria-hidden="true" lang="en">
+      <span class="neon flicker sign-main">Sultans</span>
+      <span class="neon sign-sub">of swing</span>
+    </div>
+    <h1 class="sr-only" data-i18n="k.h1">Sing It! Sultans of Swing karaoke</h1>
+
+    <div class="hud">
+      <div class="hud-box"><span class="hud-label" data-i18n="k.score">Score</span><span class="hud-val" id="score">0</span></div>
+      <div class="hype" role="meter" data-i18n-attr="aria-label:k.hype" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="hype-meter">
+        <span class="hud-label" data-i18n="k.hype">Crowd hype</span>
+        <div class="hype-bar"><i id="hype"></i></div>
+      </div>
+      <div class="hud-box"><span class="hud-label" data-i18n="k.streak">Streak</span><span class="hud-val" id="streak">×1</span></div>
+    </div>
+
+    <section class="lyrics-view" data-i18n-attr="aria-label:k.lyricsAria">
+      <ol class="lyrics" id="lyrics" lang="en"></ol>
+      <p class="sr-only" aria-live="polite" id="lyric-live" lang="en"></p>
+    </section>
+
+    <!-- ======= the deck: transport controls ======= -->
+    <section class="deck panel" data-i18n-attr="aria-label:k.controlsAria">
+      <div class="now">
+        <div class="disc" id="disc" aria-hidden="true"><i></i></div>
+        <div class="now-text" lang="en">
+          <strong id="song-title">Sultans of Swing</strong>
+          <span id="song-artist">Dire Straits</span>
+        </div>
+      </div>
+
+      <div class="neck-wrap">
+        <span class="time" id="time-now">0:00</span>
+        <div class="neck">
+          <div class="neck-fill" id="neck-fill"></div>
+          <div class="frets" id="frets" aria-hidden="true"></div>
+          <input type="range" id="seek" min="0" max="1000" value="0" step="1" data-i18n-attr="aria-label:k.seek">
+        </div>
+        <span class="time" id="time-total">0:00</span>
+      </div>
+
+      <div class="transport">
+        <button class="btn icon" type="button" id="restart" data-i18n-attr="aria-label:k.restart"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+        <button class="play" type="button" id="play" aria-label="Play"><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
+        <button class="btn icon" type="button" id="mic" aria-pressed="false" data-i18n-attr="aria-label:k.mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+        <div class="volume">
+          <button class="btn icon" type="button" id="vol-btn" aria-label="Mute music"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg></button>
+          <input type="range" id="volume" min="0" max="100" value="85" data-i18n-attr="aria-label:k.volume">
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ======= start screen ======= -->
+  <div class="start" id="start">
+    <div class="start-card panel">
+      <p class="eyebrow" data-i18n="k.eyebrow">Tonight on the main stage</p>
+      <h2 class="start-title" data-i18n="k.title">Sing It!</h2>
+      <p class="start-sub" lang="en"><span id="start-song">“Sultans of Swing”</span> · Dire Straits</p>
+      <p class="start-hint" data-i18n="k.hint">Sing all the way to the end… a legendary prize awaits. 🎸</p>
+      <div class="start-actions">
+        <button class="btn primary big" type="button" id="start-play" data-i18n="k.startShow" hidden>▶ Start the show</button>
+      </div>
+      <p class="start-foot" id="start-foot"></p>
+    </div>
+  </div>
+
+  <!-- ======= song setup dialog ======= -->
+  <dialog class="modal setup" id="setup">
+    <div class="modal-head">
+      <h2 data-i18n="k.setup">Song setup</h2>
+      <button class="btn icon" type="button" data-close data-i18n-attr="aria-label:k.close">✕</button>
+    </div>
+    <div class="modal-body">
+      <h3 data-i18n="k.lyricsH">📝 Lyrics</h3>
+      <p class="muted" data-i18n-html="k.lyricsHelp"></p>
+      <textarea id="lyrics-input" rows="10" spellcheck="false" lang="en" data-i18n-attr="aria-label:k.lyricsInput"></textarea>
+      <div class="row">
+        <button class="btn primary" type="button" id="apply-lyrics" data-i18n="k.saveLyrics">Save lyrics</button>
+        <label class="btn start-at"><span data-i18n="k.startAt">Start at</span> <input id="sync-from" value="0:00" inputmode="decimal" autocomplete="off" spellcheck="false" data-i18n-attr="aria-label:k.startAtAria"></label>
+        <button class="btn gold" type="button" id="sync-start" data-i18n="k.sync">⏱ Sync timings</button>
+        <label class="btn"><input type="file" accept=".lrc,.txt,text/plain" id="lrc-file" class="sr-only"><span data-i18n="k.import">Import .lrc</span></label>
+        <button class="btn" type="button" id="export-lrc" data-i18n="k.export">⬇ Export lyrics.js</button>
+        <button class="btn" type="button" id="reset-lyrics" data-i18n="k.reset">Reset to default</button>
+      </div>
+
+      <p class="muted small" data-i18n="k.startAtHelp"></p>
+
+      <div class="sync" id="sync" hidden>
+        <p class="muted" data-i18n-html="k.syncHelp"></p>
+        <p class="sync-next"><span data-i18n="k.next">Next:</span> <strong id="sync-line" lang="en">—</strong></p>
+        <div class="row">
+          <button class="btn primary big" type="button" id="sync-tap" data-i18n="k.tap">TAP</button>
+          <button class="btn" type="button" id="sync-undo" data-i18n="k.undo">Undo</button>
+          <button class="btn gold" type="button" id="sync-done" data-i18n="k.finish">Finish</button>
+        </div>
+        <p class="muted" id="sync-progress"></p>
+      </div>
+      <p class="muted small" data-i18n="k.localOnly">Lyrics are saved only in this browser — press Export lyrics.js and replace karaoke/lyrics.js with the downloaded file.</p>
+    </div>
+  </dialog>
+
+  <!-- ======= the surprise ======= -->
+  <div class="reveal" id="reveal" hidden>
+    <div class="beams" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="reveal-inner">
+      <div class="stage-1" id="stage-1">
+        <p class="encore neon" data-i18n="k.encore">Encore!</p>
+        <div class="stars" id="stars"></div>
+        <p class="final-score"><span data-i18n="k.finalScore">Final score</span> <b id="final-score">0</b></p>
+      </div>
+
+      <div class="stage-2" id="stage-2" hidden>
+        <p class="unlock-label" data-i18n="k.unlocked">✦ New collectible unlocked ✦</p>
+        <button class="mystery" type="button" id="mystery" data-i18n-attr="aria-label:k.revealAria">
+          <span class="mystery-inner">
+            <span class="m-ring"></span>
+            <span class="m-q">?</span>
+            <span class="m-text" data-i18n="k.legendary">Legendary</span>
+          </span>
+        </button>
+        <p class="tap-hint" data-i18n="k.tapReveal">Tap to reveal</p>
+      </div>
+
+      <div class="stage-miss" id="stage-miss" hidden>
+        <p class="miss-icon" aria-hidden="true">🔒</p>
+        <h2 class="reveal-headline" data-i18n="k.missTitle">So close!</h2>
+        <p class="reveal-message" data-i18n="k.missText"></p>
+        <div class="reveal-actions">
+          <button class="btn primary" type="button" id="miss-again" data-i18n="k.missAgain">🎤 Sing the whole song</button>
+          <a class="btn" href="../" data-nav data-i18n="k.missBack">← Back to the arcade</a>
+        </div>
+      </div>
+
+      <div class="stage-3" id="stage-3" hidden>
+        <p class="rarity-banner" data-i18n="k.rarityBanner">★ Legendary · Limited Edition ★</p>
+        <h2 class="reveal-headline" id="reveal-headline"></h2>
+        <p class="reveal-message" id="reveal-message"></p>
+        <div id="reveal-tickets"></div>
+        <div class="reveal-actions">
+          <a class="btn gold" href="../ticket/" data-nav data-i18n="k.keep">🎟️ Keep &amp; print the tickets</a>
+          <button class="btn" type="button" id="again" data-i18n="k.singAgain">🎤 Sing again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/i18n.js"></script>
+  <script src="../assets/js/arcade.js"></script>
+  <script src="../assets/js/collectible.config.js"></script>
+  <script src="../assets/js/collectible.js"></script>
+  <script src="song.config.js"></script>
+  <script src="lyrics.js"></script>
+  <script src="karaoke.js"></script>
+</body>
+</html>

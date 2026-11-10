@@ -1,0 +1,47 @@
+# Deploys the games website (the repository root) to GitHub Pages.
+# Repository-only files (.github, tools, README) are left out of the published site.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # allows a manual run from the Actions tab
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Collect the site files
+        run: |
+          mkdir _site
+          rsync -a ./ _site/ \
+            --exclude .git --exclude .github --exclude .claude \
+            --exclude tools --exclude README.md --exclude _site \
+            --exclude .gitignore --exclude .DS_Store
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload the site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>My Collectibles · The Sultan's Arcade</title>
+  <meta name="theme-color" content="#070b1d">
+  <link rel="icon" href="../assets/art/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=Monoton&family=Outfit:wght@400;600;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/collectible.css">
+  <style>
+    main { width: min(960px, 100%); margin: 0 auto; padding: 8px 16px 48px; text-align: center; }
+    .intro { color: var(--steel); max-width: 52ch; margin: 0 auto 28px; }
+    .intro b { color: var(--gold); }
+    h2.neon { font-size: clamp(30px, 7vw, 56px); margin: 8px 0 10px; --glow: var(--gold); }
+    .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 32px; }
+    .meta { margin-top: 18px; font: 12px/1.5 var(--font-mono); color: #7d8bab; }
+  </style>
+</head>
+<body data-title-key="title.ticket">
+  <header class="topbar no-print">
+    <a class="btn" href="../" data-nav data-i18n-attr="aria-label:nav.back">← <span data-i18n="nav.arcade">Arcade</span></a>
+    <span class="spacer"></span>
+    <button class="btn lang" data-lang-toggle type="button">PT</button>
+    <button class="btn icon" data-mute-toggle type="button"></button>
+  </header>
+
+  <main>
+    <h2 class="neon no-print" data-i18n="tk.heading">My Collectibles</h2>
+    <p class="intro no-print" id="intro"></p>
+    <div id="tickets"></div>
+    <p class="meta" id="meta"></p>
+    <div class="actions no-print" id="actions"></div>
+  </main>
+
+  <script src="../assets/js/i18n.js"></script>
+  <script src="../assets/js/arcade.js"></script>
+  <script src="../assets/js/collectible.config.js"></script>
+  <script src="../assets/js/collectible.js"></script>
+  <script>
+    (function () {
+      const { t, pick, locale } = I18n;
+      const cfg = Collectible.config;
+      const intro = document.getElementById("intro");
+      const actions = document.getElementById("actions");
+
+      function render() {
+        const item = Collectible.get();
+        if (!item) {
+          intro.innerHTML = t("tk.lockedIntro");
+          document.getElementById("tickets").innerHTML = `<div class="ticket-locked"><div><div class="lock">🔒</div><p>${t("tk.locked")}<br><small>${t("tk.rarityUnknown")}</small></p></div></div>`;
+          actions.innerHTML = `<a class="btn primary" href="../karaoke/" data-nav>${t("tk.goSing")}</a>`;
+          Arcade.wireLinks(actions);
+          return;
+        }
+        intro.innerHTML = t("tk.intro", { rarity: pick(cfg.rarity).toLowerCase(), artist: cfg.artist, song: cfg.song });
+        Collectible.render(document.getElementById("tickets"), item, { root: "../" });
+        const when = new Date(item.unlockedAt).toLocaleDateString(locale(), { day: "numeric", month: "long", year: "numeric" });
+        document.getElementById("meta").textContent = t("tk.meta", { serial: item.serial, date: when }) + (item.score ? t("tk.best", { score: item.score.toLocaleString(locale()) }) : "");
+        actions.innerHTML = `
+          <button class="btn gold" type="button" id="print">${t("tk.print")}</button>
+          <a class="btn" href="../${cfg.portrait}" download="portrait.svg">${t("tk.download")}</a>
+          <a class="btn" href="../karaoke/" data-nav>${t("tk.again")}</a>`;
+        document.getElementById("print").addEventListener("click", () => window.print());
+        Arcade.wireLinks(actions);
+      }
+      render();
+      document.addEventListener("langchange", render);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Name That Tune · The Sultan's Arcade</title>
+  <meta name="theme-color" content="#070b1d">
+  <link rel="icon" href="../assets/art/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=Monoton&family=Outfit:wght@400;600;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/minigame.css">
+  <style>
+    .quiz { max-width: 560px; margin: 0 auto; }
+    .player { position: relative; display: grid; place-items: center; margin: 4px auto 18px; width: 190px; aspect-ratio: 1; }
+    .ring { position: absolute; inset: 0; transform: rotate(-90deg); }
+    .ring circle { fill: none; stroke-width: 10; }
+    .ring .track { stroke: rgba(255, 255, 255, .08); }
+    .ring .bar { stroke: var(--green); stroke-linecap: round; transition: stroke .3s; filter: drop-shadow(0 0 8px currentColor); }
+    .player.warn .ring .bar { stroke: var(--amber); }
+    .player.danger .ring .bar { stroke: var(--neon-red); }
+    .disc {
+      width: 72%; aspect-ratio: 1; border-radius: 50%; position: relative; overflow: hidden;
+      background: radial-gradient(circle, var(--neon-red) 0 16%, #1a1a1a 17% 18%, transparent 19%), repeating-radial-gradient(circle, #141414 0 2px, #222 2px 4px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, .7), inset 0 0 0 4px #0a0a0a;
+      animation: spin 3s linear infinite paused;
+    }
+    .disc img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; opacity: 0; transition: opacity .5s; }
+    .disc.show img { opacity: 1; }
+    .playing .disc { animation-play-state: running; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .secs { position: absolute; bottom: -6px; right: -6px; min-width: 54px; padding: 8px 10px; border-radius: 14px; background: #0e1636; border: 1px solid rgba(255, 255, 255, .15); font: 400 30px/1 var(--font-display); color: var(--cream); font-variant-numeric: tabular-nums; }
+    .player.danger .secs { color: var(--neon-red); animation: beat .5s ease-in-out infinite; }
+    @keyframes beat { 50% { transform: scale(1.12); } }
+    .eq { position: absolute; top: -4px; left: -4px; display: flex; gap: 3px; align-items: flex-end; height: 34px; opacity: 0; transition: opacity .3s; }
+    .playing .eq { opacity: 1; }
+    .eq i { width: 5px; border-radius: 2px; background: linear-gradient(var(--gold), var(--neon-red)); animation: eqb .9s ease-in-out infinite; }
+    .eq i:nth-child(2) { animation-delay: -.3s; } .eq i:nth-child(3) { animation-delay: -.6s; } .eq i:nth-child(4) { animation-delay: -.15s; }
+    @keyframes eqb { 0%, 100% { height: 20%; } 50% { height: 100%; } }
+
+    .question { margin: 0 0 12px; font: 400 26px/1.1 var(--font-display); letter-spacing: .06em; }
+    .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0; padding: 0; list-style: none; }
+    .opt {
+      width: 100%; min-height: 64px; padding: 12px 14px; border-radius: 14px; cursor: pointer; text-align: left;
+      display: flex; align-items: center; gap: 10px;
+      background: linear-gradient(180deg, rgba(25, 37, 84, .95), rgba(13, 20, 48, .95)); color: var(--cream);
+      border: 1px solid rgba(255, 255, 255, .14); font: 600 16px/1.2 var(--font-body);
+      transition: transform .12s, border-color .2s, background .2s; animation: rise .35s ease backwards; animation-delay: calc(var(--i) * 60ms);
+    }
+    .opt:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--gold); }
+    .opt kbd { flex: none; width: 26px; height: 26px; display: grid; place-items: center; border-radius: 8px; background: rgba(255, 255, 255, .1); font: 700 12px/1 var(--font-mono); color: var(--steel); }
+    .opt:disabled { cursor: default; }
+    .opt.right { background: linear-gradient(180deg, #1f8f4e, #12603a); border-color: var(--green); animation: pop .35s ease; }
+    .opt.wrong { background: linear-gradient(180deg, #a3243a, #6b1222); border-color: var(--neon-red); animation: shake .35s ease; }
+    .opt.dim { opacity: .45; }
+    @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
+    @keyframes shake { 25% { translate: -6px 0; } 75% { translate: 6px 0; } }
+    .feedback { min-height: 52px; margin: 14px 0 0; }
+    .feedback strong { display: block; font: 400 24px/1.1 var(--font-display); letter-spacing: .05em; }
+    .feedback.good strong { color: var(--green); } .feedback.bad strong { color: var(--neon-red); }
+    .feedback small { color: var(--steel); }
+    .feedback a { color: var(--gold); }
+    .row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
+    .credit { margin-top: 28px; font-size: 12px; color: #6f7f9b; }
+    .intro-card { padding: 26px 20px; }
+    .intro-card p { color: #cfd8e8; margin: 0 0 18px; }
+    @media (max-width: 520px) { .options { grid-template-columns: 1fr; } .player { width: 160px; } }
+  </style>
+</head>
+<body data-title-key="title.tune">
+  <header class="topbar">
+    <a class="btn" href="../" data-nav data-i18n-attr="aria-label:nav.back">← <span data-i18n="nav.arcade">Arcade</span></a>
+    <span class="spacer"></span>
+    <button class="btn lang" data-lang-toggle type="button">PT</button>
+    <button class="btn icon" data-mute-toggle type="button"></button>
+  </header>
+
+  <main class="game-main">
+    <h1 class="game-title neon" style="--glow: var(--green)" data-i18n="q.title">Name That Tune</h1>
+    <p class="game-sub" data-i18n="q.sub">Hear a piece of a Dire Straits song and pick the right title before time runs out.</p>
+
+    <div class="stats">
+      <div class="stat"><span data-i18n="q.round">Round</span><b id="round">0/10</b></div>
+      <div class="stat"><span data-i18n="q.score">Score</span><b id="score">0</b></div>
+      <div class="stat"><span data-i18n="q.best">Best</span><b id="best">0</b></div>
+    </div>
+
+    <div class="quiz">
+      <!-- start / loading / error -->
+      <section class="intro-card panel" id="intro">
+        <p id="intro-text">Tuning up… loading songs</p>
+        <button class="btn primary big" type="button" id="start" hidden>▶ Start</button>
+      </section>
+
+      <!-- a round -->
+      <section id="play" hidden>
+        <div class="player" id="player" aria-hidden="true">
+          <svg class="ring" viewBox="0 0 100 100"><circle class="track" cx="50" cy="50" r="44"/><circle class="bar" id="bar" cx="50" cy="50" r="44"/></svg>
+          <div class="disc" id="disc"><img id="art" alt=""></div>
+          <div class="eq"><i></i><i></i><i></i><i></i></div>
+          <span class="secs" id="secs">15</span>
+        </div>
+        <p class="sr-only" aria-live="polite" id="timer-live"></p>
+        <h2 class="question" data-i18n="q.listen">Which song is this?</h2>
+        <ul class="options" id="options" role="list" lang="en"></ul>
+        <div class="feedback" id="feedback" aria-live="polite"></div>
+        <div class="row">
+          <button class="btn" type="button" id="replay" data-i18n="q.replay">↺ Replay</button>
+          <button class="btn primary" type="button" id="next" hidden></button>
+        </div>
+      </section>
+
+      <!-- results -->
+      <section class="win-banner panel" id="done" hidden>
+        <h2 data-i18n="q.doneH">Game over!</h2>
+        <p id="done-text"></p>
+        <button class="btn primary" type="button" id="again" data-i18n="q.again">Play again</button>
+      </section>
+
+      <p class="credit" data-i18n="q.credit">Song previews courtesy of Apple Music.</p>
+    </div>
+  </main>
+
+  <script src="../assets/js/i18n.js"></script>
+  <script src="../assets/js/arcade.js"></script>
+  <script src="songs.config.js"></script>
+  <script src="tune.js"></script>
+</body>
+</html>

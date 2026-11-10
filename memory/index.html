@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Record Collector · The Sultan's Arcade</title>
+  <meta name="theme-color" content="#070b1d">
+  <link rel="icon" href="../assets/art/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=Monoton&family=Outfit:wght@400;600;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="../assets/css/minigame.css">
+  <style>
+    .board { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(8px, 2vw, 14px); max-width: 520px; margin: 0 auto; perspective: 900px; }
+    .tile { position: relative; aspect-ratio: 1; border: 0; padding: 0; background: none; cursor: pointer; transform-style: preserve-3d; transition: transform .45s cubic-bezier(.3, 1.4, .5, 1); animation: deal .5s ease backwards; animation-delay: calc(var(--i) * 35ms); }
+    @keyframes deal { from { opacity: 0; transform: translateY(30px) rotate(-8deg); } }
+    .tile.up, .tile.done { transform: rotateY(180deg); }
+    .face { position: absolute; inset: 0; border-radius: 14px; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: grid; place-items: center; }
+    .back {
+      background: radial-gradient(circle, #ff3b52 0 14%, #1b1b1b 15% 16%, transparent 17%), repeating-radial-gradient(circle, #141414 0 2px, #222 2px 4px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, .55), inset 0 0 0 3px #0a0a0a; border-radius: 50%;
+    }
+    .tile:hover .back { filter: brightness(1.25); }
+    .front { transform: rotateY(180deg); font-size: clamp(30px, 9vw, 52px); background: linear-gradient(160deg, #f6ead2, #e2cfa4); box-shadow: 0 8px 18px rgba(0, 0, 0, .5), inset 0 0 0 3px #e8c36a; }
+    .tile.done .front { animation: matched .6s ease; box-shadow: 0 0 24px rgba(232, 195, 106, .8), inset 0 0 0 3px #e8c36a; }
+    @keyframes matched { 50% { transform: rotateY(180deg) scale(1.12); } }
+    .tile.miss { animation: wobble .4s ease; }
+    @keyframes wobble { 25% { translate: -5px 0; } 75% { translate: 5px 0; } }
+  </style>
+</head>
+<body data-title-key="title.memory">
+  <header class="topbar">
+    <a class="btn" href="../" data-nav data-i18n-attr="aria-label:nav.back">← <span data-i18n="nav.arcade">Arcade</span></a>
+    <span class="spacer"></span>
+    <button class="btn lang" data-lang-toggle type="button">PT</button>
+    <button class="btn icon" data-mute-toggle type="button"></button>
+  </header>
+  <main class="game-main">
+    <h1 class="game-title neon" style="--glow: var(--neon-blue)" data-i18n="m.title">Record Collector</h1>
+    <p class="game-sub" data-i18n="m.sub">Flip the records and find every matching pair.</p>
+    <div class="stats">
+      <div class="stat"><span data-i18n="m.moves">Moves</span><b id="moves">0</b></div>
+      <div class="stat"><span data-i18n="m.pairs">Pairs</span><b id="pairs">0/8</b></div>
+      <div class="stat"><span data-i18n="m.time">Time</span><b id="time">0:00</b></div>
+      <div class="stat"><span data-i18n="m.best">Best</span><b id="best">—</b></div>
+    </div>
+    <div class="board" id="board" role="grid" data-i18n-attr="aria-label:m.board"></div>
+    <div class="win-banner panel" id="win" hidden>
+      <h2 data-i18n="m.winH">Collection complete!</h2>
+      <p id="win-text"></p>
+      <button class="btn primary" type="button" id="again" data-i18n="m.again">Shuffle &amp; play again</button>
+    </div>
+  </main>
+  <script src="../assets/js/i18n.js"></script>
+  <script src="../assets/js/arcade.js"></script>
+  <script>
+    (function () {
+      const { sfx, fx, store } = Arcade;
+      const { t } = I18n;
+      const ICONS = ["🎸", "🎹", "🥁", "🎷", "🎺", "🎤", "🎧", "📻"];
+      const board = document.getElementById("board");
+      let first = null, lock = false, moves = 0, pairs = 0, start = 0, timer = 0;
+      const fmt = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+      const best = () => store.get("memory-best", null);
+      const showBest = () => { const b = best(); document.getElementById("best").textContent = b ? t("m.bestVal", { n: b }) : "—"; };
+
+      function deal() {
+        const deck = [...ICONS, ...ICONS].sort(() => Math.random() - 0.5);
+        board.innerHTML = deck.map((icon, i) => `
+          <button class="tile" style="--i:${i}" data-icon="${icon}" aria-label="${t("m.down")}">
+            <span class="face back"></span><span class="face front" aria-hidden="true">${icon}</span>
+          </button>`).join("");
+        first = null; lock = false; moves = 0; pairs = 0; start = 0;
+        clearInterval(timer);
+        update(); document.getElementById("time").textContent = "0:00";
+        document.getElementById("win").hidden = true;
+        showBest();
+      }
+
+      function update() {
+        document.getElementById("moves").textContent = moves;
+        document.getElementById("pairs").textContent = `${pairs}/8`;
+      }
+
+      board.addEventListener("click", (e) => {
+        const tile = e.target.closest(".tile");
+        if (!tile || lock || tile === first || tile.classList.contains("done")) return;
+        if (!start) { start = Date.now(); timer = setInterval(() => { document.getElementById("time").textContent = fmt(Math.floor((Date.now() - start) / 1000)); }, 500); }
+        sfx.flip();
+        tile.classList.add("up");
+        tile.setAttribute("aria-label", t("m.rec", { icon: tile.dataset.icon }));
+        if (!first) { first = tile; return; }
+        moves++; update();
+        if (first.dataset.icon === tile.dataset.icon) {
+          [first, tile].forEach((t) => { t.classList.add("done"); t.setAttribute("aria-disabled", "true"); });
+          first = null; pairs++; update();
+          setTimeout(() => sfx.good(), 150);
+          if (pairs === 8) win();
+        } else {
+          lock = true;
+          const a = first; first = null;
+          setTimeout(() => {
+            sfx.bad();
+            [a, tile].forEach((t) => { t.classList.remove("up"); t.classList.add("miss"); t.setAttribute("aria-label", I18n.t("m.down")); setTimeout(() => t.classList.remove("miss"), 400); });
+            lock = false;
+          }, 800);
+        }
+      });
+
+      function win() {
+        clearInterval(timer);
+        const secs = Math.floor((Date.now() - start) / 1000);
+        const b = best();
+        const record = !b || moves < b;
+        if (record) store.set("memory-best", moves);
+        showBest();
+        document.getElementById("win-text").textContent = t("m.winText", { moves, time: fmt(secs) }) + (record ? t("m.record") : "");
+        setTimeout(() => { document.getElementById("win").hidden = false; sfx.win(); fx.burst({ y: innerHeight * 0.4 }); }, 500);
+      }
+
+      document.getElementById("again").addEventListener("click", deal);
+      document.addEventListener("langchange", () => { showBest(); board.querySelectorAll(".tile:not(.up):not(.done)").forEach((x) => x.setAttribute("aria-label", t("m.down"))); });
+      deal();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" role="img" aria-labelledby="t">
+  <title id="t">Illustrated portrait of Dad as a classic-rock guitar hero</title>
+  <!-- Original cartoon illustration. Transparent background: the ticket supplies the stage. -->
+  <defs>
+    <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eeb08c"/>
+      <stop offset=".55" stop-color="#dc9672"/>
+      <stop offset="1" stop-color="#c27a58"/>
+    </linearGradient>
+    <radialGradient id="dome" cx=".42" cy=".22" r=".55">
+      <stop offset="0" stop-color="#fff3e6" stop-opacity=".75"/>
+      <stop offset=".35" stop-color="#ffe0c8" stop-opacity=".25"/>
+      <stop offset="1" stop-color="#ffe0c8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="shirt" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".6" stop-color="#eef1f4"/>
+      <stop offset="1" stop-color="#c9d1db"/>
+    </linearGradient>
+    <linearGradient id="strap" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#3a1d12"/>
+      <stop offset=".5" stop-color="#6b3622"/>
+      <stop offset="1" stop-color="#3a1d12"/>
+    </linearGradient>
+    <linearGradient id="band" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff4a5c"/>
+      <stop offset="1" stop-color="#b8162d"/>
+    </linearGradient>
+    <clipPath id="headClip">
+      <path d="M200 52C268 52 299 104 299 174c0 44-2 74-12 98-15 34-48 60-87 62-39-2-72-28-87-62-10-24-12-54-12-98 0-70 31-122 99-122z"/>
+    </clipPath>
+  </defs>
+
+  <g stroke="#3b2016" stroke-linejoin="round" stroke-linecap="round">
+    <!-- ===== shoulders: white polo ===== -->
+    <path d="M18 500c4-64 22-104 70-124 30-12 62-20 82-30h60c20 10 52 18 82 30 48 20 66 60 70 124z" fill="url(#shirt)" stroke-width="4"/>
+    <!-- shirt folds -->
+    <path d="M92 420c10 24 14 52 12 80M310 420c-10 24-14 52-12 80" fill="none" stroke="#b9c3cf" stroke-width="3"/>
+
+    <!-- ===== neck ===== -->
+    <path d="M146 286c2 34 0 56-6 76 28 20 92 20 120 0-6-20-8-42-6-76z" fill="#c98462" stroke-width="4"/>
+    <path d="M160 330c24 14 56 14 80 0" fill="none" stroke="#a6603f" stroke-width="3" opacity=".6"/>
+
+    <!-- ===== collar with navy tipping ===== -->
+    <path d="M152 352c-18 8-34 14-46 20 20 22 46 40 70 50l24-56z" fill="#fff" stroke-width="4"/>
+    <path d="M248 352c18 8 34 14 46 20-20 22-46 40-70 50l-24-56z" fill="#fff" stroke-width="4"/>
+    <path d="M110 376c20 20 42 36 64 44M290 376c-20 20-42 36-64 44" fill="none" stroke="#1d2b5c" stroke-width="5"/>
+    <!-- placket + buttons -->
+    <path d="M200 366v90" fill="none" stroke="#b9c3cf" stroke-width="3"/>
+    <path d="M186 372h28v84h-28z" fill="none" stroke="#c9d1db" stroke-width="2"/>
+    <circle cx="200" cy="398" r="4.5" fill="#f4f4f2" stroke-width="2"/>
+    <circle cx="200" cy="432" r="4.5" fill="#f4f4f2" stroke-width="2"/>
+
+    <!-- ===== guitar strap across the chest ===== -->
+    <path d="M70 392c80 30 170 70 262 108h-56C200 470 130 440 52 408z" fill="url(#strap)" stroke-width="3"/>
+    <path d="M66 402c80 30 160 64 240 96" fill="none" stroke="#e8c36a" stroke-width="2" stroke-dasharray="2 9"/>
+
+    <!-- pocket with a gold guitar-pick pin -->
+    <path d="M262 420l52-4 4 52-52 4z" fill="none" stroke="#b9c3cf" stroke-width="3"/>
+    <path d="M287 414c12 0 20 6 20 14 0 10-10 22-18 28-8-6-18-18-18-28 0-8 6-14 16-14z" fill="#e8c36a" stroke-width="3"/>
+    <text x="288" y="434" font-family="Georgia,serif" font-size="12" font-weight="700" text-anchor="middle" fill="#3b2016" stroke="none">DS</text>
+
+    <!-- ===== ears ===== -->
+    <g fill="#d88d68" stroke-width="4">
+      <path d="M108 186c-16-6-26 6-24 26 2 22 12 40 30 42"/>
+      <path d="M292 186c16-6 26 6 24 26-2 22-12 40-30 42"/>
+    </g>
+    <path d="M100 204c-4 12 0 26 10 32M300 204c4 12 0 26-10 32" fill="none" stroke="#a6603f" stroke-width="3"/>
+
+    <!-- ===== head ===== -->
+    <path d="M200 52C268 52 299 104 299 174c0 44-2 74-12 98-15 34-48 60-87 62-39-2-72-28-87-62-10-24-12-54-12-98 0-70 31-122 99-122z" fill="url(#skin)" stroke-width="4.5"/>
+
+    <g clip-path="url(#headClip)" stroke="none">
+      <!-- side shadow + warm cheeks -->
+      <path d="M262 80c40 40 44 140 20 200-20 40-50 54-82 52 40-10 74-60 78-130 2-50-4-90-16-122z" fill="#b8694a" opacity=".35"/>
+      <ellipse cx="150" cy="248" rx="26" ry="16" fill="#e0705a" opacity=".22"/>
+      <ellipse cx="252" cy="248" rx="26" ry="16" fill="#e0705a" opacity=".2"/>
+      <!-- the famous shiny dome -->
+      <ellipse cx="190" cy="110" rx="90" ry="70" fill="url(#dome)"/>
+      <path d="M150 78c14-10 34-14 52-12" fill="none" stroke="#fff" stroke-width="6" opacity=".55" stroke-linecap="round"/>
+    </g>
+
+    <!-- short silver-white side hair -->
+    <!-- short-cropped silver hair, hugging the sides of the head -->
+    <g fill="#dcd8cf" stroke="none" opacity=".95">
+      <path d="M102 150c-6 30-4 62 8 96 4 2 8 2 12-1-10-30-12-62-4-92-2-6-8-6-16-3z"/>
+      <path d="M298 150c6 30 4 62-8 96-4 2-8 2-12-1 10-30 12-62 4-92 2-6 8-6 16-3z"/>
+    </g>
+    <g fill="none" stroke="#f7f5f0" stroke-width="2" opacity=".9">
+      <path d="M106 168l5 4M105 184l6 3M106 200l6 3M108 216l6 2M111 232l5 2"/>
+      <path d="M294 168l-5 4M295 184l-6 3M294 200l-6 3M292 216l-6 2M289 232l-5 2"/>
+    </g>
+    <path d="M118 158c-8 28-6 60 4 88M282 158c8 28 6 60-4 88" fill="none" stroke="#b8b0a4" stroke-width="2.5"/>
+
+    <!-- ===== red rock'n'roll headband ===== -->
+    <path d="M101 150c26-32 172-32 198 0l-2 20c-30-28-164-28-194 0z" fill="url(#band)" stroke-width="3.5"/>
+    <path d="M110 154c30-22 150-22 180 0" fill="none" stroke="#ff9aa6" stroke-width="2" opacity=".7"/>
+    <!-- knot tails behind the ear -->
+    <path d="M296 160c14 2 24 10 30 24-10-2-18-6-24-12 6 12 8 22 6 34-10-10-14-24-14-38z" fill="#d81f3a" stroke-width="3"/>
+
+    <!-- forehead lines -->
+    <g fill="none" stroke="#a6603f" stroke-width="2.5" opacity=".55">
+      <path d="M160 128c26-6 54-6 80 0"/>
+      <path d="M170 140c20-4 40-4 60 0"/>
+    </g>
+
+    <!-- ===== eyebrows (thin, silver) ===== -->
+    <g fill="none" stroke="#8d847b" stroke-width="7">
+      <path d="M136 182c14-10 32-12 50-6"/>
+      <path d="M214 176c18-6 36-4 50 6"/>
+    </g>
+
+    <!-- ===== eyes: warm brown, slightly narrowed, smiling ===== -->
+    <g stroke-width="3">
+      <path d="M144 202c10-10 30-12 42-2-12 8-30 10-42 2z" fill="#fbf4ec"/>
+      <path d="M214 200c12-10 32-8 42 2-12 8-30 6-42-2z" fill="#fbf4ec"/>
+    </g>
+    <g stroke="none">
+      <circle cx="166" cy="202" r="8" fill="#5b3420"/>
+      <circle cx="234" cy="202" r="8" fill="#5b3420"/>
+      <circle cx="166" cy="202" r="3.6" fill="#1b0f08"/>
+      <circle cx="234" cy="202" r="3.6" fill="#1b0f08"/>
+      <circle cx="169" cy="199" r="2.2" fill="#fff"/>
+      <circle cx="237" cy="199" r="2.2" fill="#fff"/>
+    </g>
+    <!-- heavy upper lids -->
+    <g fill="none" stroke-width="5">
+      <path d="M140 202c12-14 34-16 48-2"/>
+      <path d="M212 200c14-14 36-12 48 2"/>
+    </g>
+    <g fill="none" stroke="#a6603f" stroke-width="2.5" opacity=".75">
+      <!-- lid creases -->
+      <path d="M146 190c12-6 26-6 36 0M218 190c10-6 24-6 36 0"/>
+      <!-- under-eye bags -->
+      <path d="M148 214c10 6 26 6 36 0M216 214c10 6 26 6 36 0"/>
+      <!-- crow's feet: the smile lines -->
+      <path d="M136 206l-10 -2M137 213l-9 5M264 206l10 -2M263 213l9 5" opacity=".7"/>
+    </g>
+
+    <!-- ===== nose: long, strong, rounded tip ===== -->
+    <path d="M192 206c-2 18-8 34-14 44-6 10 0 22 14 22 4 4 12 4 16 0 14 0 20-12 14-22-6-10-12-26-14-44" fill="#d48a66" stroke-width="3.5"/>
+    <path d="M190 266c-6 0-10-4-10-8M210 266c6 0 10-4 10-8" fill="none" stroke-width="3"/>
+    <ellipse cx="196" cy="252" rx="7" ry="5" fill="#f0b896" stroke="none" opacity=".7"/>
+
+    <!-- ===== smile lines + mouth (gentle closed-mouth smile) ===== -->
+    <g fill="none" stroke="#9e5a3c" stroke-width="3" opacity=".7">
+      <path d="M172 254c-14 14-18 30-12 48"/>
+      <path d="M228 254c14 14 18 30 12 48"/>
+    </g>
+    <path d="M176 292c14 6 32 6 50-4" fill="none" stroke-width="4"/>
+    <path d="M226 288c3-1 5-3 6-6M176 292c-3 0-5-2-6-4" fill="none" stroke-width="3"/>
+    <path d="M186 302c10 4 22 4 30 0" fill="none" stroke="#a6603f" stroke-width="3" opacity=".6"/>
+    <!-- chin -->
+    <path d="M186 318c8 4 20 4 28 0" fill="none" stroke="#a6603f" stroke-width="2.5" opacity=".6"/>
+  </g>
+</svg>

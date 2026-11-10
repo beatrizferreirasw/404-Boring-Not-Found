@@ -1,0 +1,11 @@
+/* Shared layout for the smaller games (Record Collector, Jam Session). */
+.game-main { width: min(720px, 100%); margin: 0 auto; padding: 4px 16px 40px; text-align: center; }
+.game-title { margin: 6px 0 4px; font-size: clamp(36px, 9vw, 64px); }
+.game-sub { margin: 0 0 18px; color: var(--steel); }
+.stats { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+.stat { min-width: 92px; padding: 8px 14px; border-radius: 14px; background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .1); }
+.stat span { display: block; font: 700 10px/1 var(--font-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--steel); }
+.stat b { display: block; margin-top: 4px; font: 400 26px/1 var(--font-display); letter-spacing: .05em; color: var(--gold); font-variant-numeric: tabular-nums; }
+.win-banner { margin: 22px auto 0; padding: 18px; max-width: 420px; animation: pop .4s ease both; }
+.win-banner h2 { margin: 0 0 6px; font-family: var(--font-display); font-weight: 400; font-size: 36px; letter-spacing: .05em; color: var(--gold); }
+.win-banner p { margin: 0 0 14px; color: #cfd8e8; }

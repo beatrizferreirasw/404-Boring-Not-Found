@@ -1,0 +1,152 @@
+/* ==========================================================================
+   Collectible concert ticket — vintage poster meets holographic trading card
+   ========================================================================== */
+
+.ticket-pair {
+  display: flex; justify-content: center; align-items: flex-start;
+  gap: clamp(16px, 3vw, 36px); flex-wrap: wrap;
+  perspective: 1400px;
+}
+.ticket-slot { width: min(340px, 86vw); }
+
+.ticket {
+  --mx: 50%; --my: 30%;
+  --paper: #f3e6c8; --ink: #20172e; --red: #c8192f; --gold: #c9993d; --navy: #14204a;
+  position: relative; isolation: isolate;
+  display: flex; flex-direction: column;
+  border-radius: 16px; overflow: hidden;
+  color: var(--ink);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .25 0 0 0 0 .1 0 0 0 .18 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, #f8edd3, var(--paper));
+  box-shadow:
+    0 0 0 2px #2a1c05,
+    0 0 0 5px #e8c36a,
+    0 0 0 7px #8a6420,
+    0 30px 60px -20px rgba(0, 0, 0, .8),
+    0 0 50px -10px rgba(232, 195, 106, .5);
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transform-style: preserve-3d;
+  transition: transform .2s ease-out;
+  font-family: var(--font-body);
+}
+
+.t-main { padding: 14px 16px 10px; position: relative; }
+
+.t-top {
+  display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  font: 700 10px/1 var(--font-mono); letter-spacing: .16em; text-transform: uppercase;
+  color: var(--red); padding-bottom: 10px; border-bottom: 1.5px dashed rgba(32, 23, 46, .35);
+}
+.t-serial { color: var(--ink); }
+
+/* ---- artwork window ---- */
+.t-art {
+  position: relative; margin: 12px 0 0; aspect-ratio: 1 / 1.02; border-radius: 160px 160px 10px 10px;
+  overflow: hidden; border: 3px solid var(--ink);
+  background: linear-gradient(180deg, #0b1230 0%, #24306e 38%, #b2324a 64%, #f39b4a 82%, #ffd58a 100%);
+  box-shadow: inset 0 0 0 3px #e8c36a;
+}
+.t-sun {
+  position: absolute; left: 50%; top: 58%; width: 78%; aspect-ratio: 1; transform: translate(-50%, -50%);
+  border-radius: 50%;
+  /* retro striped sunset: solid top half, venetian stripes on the lower half */
+  background: radial-gradient(circle, #ffe7a8, #ff8a4c 70%);
+  -webkit-mask: linear-gradient(#000 0 50%, transparent 50%), repeating-linear-gradient(180deg, #000 0 10px, transparent 10px 15px);
+  mask: linear-gradient(#000 0 50%, transparent 50%), repeating-linear-gradient(180deg, #000 0 10px, transparent 10px 15px);
+  -webkit-mask-composite: source-over; mask-composite: add;
+  opacity: .9;
+}
+.t-rays {
+  position: absolute; inset: -40%;
+  background: repeating-conic-gradient(from 0deg at 50% 62%, rgba(255, 231, 168, .22) 0 6deg, transparent 6deg 18deg);
+  animation: rays 40s linear infinite;
+}
+@keyframes rays { to { transform: rotate(360deg); } }
+.t-guitar { position: absolute; width: 30%; right: 4%; bottom: 2%; transform: rotate(24deg); filter: drop-shadow(0 6px 8px rgba(0, 0, 0, .5)); }
+.t-portrait { position: absolute; left: 50%; bottom: 0; width: 84%; height: auto; transform: translateX(-52%); filter: drop-shadow(0 8px 14px rgba(0, 0, 0, .45)); }
+.t-rarity, .t-edition {
+  position: absolute; top: 30%; font: 700 9px/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase;
+  padding: 5px 7px; border-radius: 4px; z-index: 2;
+}
+.t-rarity { left: 8px; color: #2a1c05; background: linear-gradient(135deg, #fff2c4, #e8c36a 50%, #b8892f); box-shadow: 0 2px 6px rgba(0, 0, 0, .4); }
+.t-edition { right: 8px; color: #fff; background: var(--red); }
+
+/* ---- titles ---- */
+.t-title { text-align: center; margin-top: 12px; }
+.t-present { margin: 0; font: 700 10px/1.2 var(--font-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--navy); }
+.t-artist {
+  margin: 6px 0 0; font: 400 clamp(40px, 12vw, 52px)/.9 var(--font-display); letter-spacing: .04em;
+  color: var(--red);
+  text-shadow: 2px 2px 0 var(--ink), 4px 4px 0 rgba(232, 195, 106, .9);
+}
+.t-song { margin: 6px 0 0; font: italic 400 24px/1 var(--font-serif); color: var(--navy); }
+.t-feat { margin: 6px 0 0; font-size: 12px; letter-spacing: .04em; color: #4a3f55; }
+.t-feat strong { color: var(--red); font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
+
+.t-grid {
+  display: grid; grid-template-columns: 1.5fr .9fr .9fr 1fr; margin: 12px 0 0; padding: 0;
+  border: 1.5px solid var(--ink); border-radius: 6px; overflow: hidden;
+}
+.t-grid div { padding: 6px 4px; text-align: center; border-left: 1.5px solid var(--ink); }
+.t-grid div:first-child { border-left: 0; }
+.t-grid dt { font: 700 8px/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: #6b5e74; }
+.t-grid dd { margin: 4px 0 0; font: 400 16px/1 var(--font-display); letter-spacing: .04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.t-venue { margin: 8px 0 0; text-align: center; font: 700 9px/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: #6b5e74; }
+
+/* ---- perforation & stub ---- */
+.t-perf { position: relative; height: 18px; }
+.t-perf::before { content: ""; position: absolute; left: 14px; right: 14px; top: 50%; border-top: 2px dashed rgba(32, 23, 46, .45); }
+.t-perf::after {
+  content: ""; position: absolute; inset: 0 -9px;
+  background: radial-gradient(circle at 0 50%, var(--night) 9px, transparent 9.5px), radial-gradient(circle at 100% 50%, var(--night) 9px, transparent 9.5px);
+}
+.t-stub {
+  display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px 12px;
+  padding: 6px 16px 14px; background: linear-gradient(180deg, transparent, rgba(200, 25, 47, .08));
+}
+.t-stub div { display: flex; flex-direction: column; gap: 4px; }
+.t-admit { font: 400 26px/1 var(--font-display); letter-spacing: .1em; color: var(--red); }
+.t-stub span { font: 700 9px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: #4a3f55; }
+.t-barcode { width: 110px; height: 34px; fill: var(--ink); }
+.t-stub-serial { grid-column: 2; text-align: center; }
+
+/* ---- holographic foil ---- */
+.t-holo {
+  position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: inherit;
+  background:
+    radial-gradient(circle at var(--mx) var(--my), rgba(255, 255, 255, .55), transparent 35%),
+    linear-gradient(115deg, transparent 20%, rgba(255, 0, 128, .35) 32%, rgba(255, 220, 0, .3) 40%, rgba(0, 255, 170, .3) 48%, rgba(0, 170, 255, .35) 56%, transparent 68%);
+  background-size: 100% 100%, 260% 260%;
+  background-position: center, var(--mx) var(--my);
+  mix-blend-mode: color-dodge; opacity: .42;
+  transition: opacity .3s;
+}
+.ticket:hover .t-holo { opacity: .7; }
+
+/* Mobile with no pointer: slow automatic shimmer */
+@media (hover: none) {
+  .t-holo { animation: holo 5s ease-in-out infinite alternate; }
+  @keyframes holo { from { background-position: center, 0% 0%; } to { background-position: center, 100% 100%; } }
+}
+
+/* ---- locked silhouette ---- */
+.ticket-locked {
+  width: min(340px, 86vw); aspect-ratio: 340 / 640; margin: 0 auto; border-radius: 16px;
+  display: grid; place-items: center; text-align: center; padding: 24px;
+  border: 2px dashed rgba(159, 179, 200, .4); color: var(--steel);
+  background: repeating-linear-gradient(45deg, rgba(255, 255, 255, .03) 0 12px, transparent 12px 24px);
+}
+.ticket-locked .lock { font-size: 64px; filter: grayscale(1); }
+
+/* ---- print: just the tickets on a clean page ---- */
+@media print {
+  @page { margin: 12mm; }
+  body { background: #fff !important; animation: none !important; }
+  .no-print, canvas.fx-layer { display: none !important; }
+  .ticket-pair { gap: 10mm; }
+  .ticket-slot { width: 82mm; break-inside: avoid; }
+  .ticket { transform: none !important; box-shadow: 0 0 0 2px #2a1c05, 0 0 0 5px #e8c36a, 0 0 0 7px #8a6420; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .t-holo, .t-rays { display: none; }
+  .t-perf::after { background: radial-gradient(circle at 0 50%, #fff 9px, transparent 9.5px), radial-gradient(circle at 100% 50%, #fff 9px, transparent 9.5px); }
+}
