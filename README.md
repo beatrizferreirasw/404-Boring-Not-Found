@@ -3,8 +3,6 @@
 A small, self-contained games website made as a gift for Dad.
 Plain HTML, CSS and JavaScript: no build step, no dependencies, no frameworks.
 
-**Live site:** https://beatrizferreirasw.github.io/404-Boring-Not-Found/
-
 | Game | Folder | What it is |
 |---|---|---|
 | **Sing It!** (featured) | `karaoke/` | Karaoke to “Sultans of Swing”. Finish the song to unlock the collectible concert tickets. |
