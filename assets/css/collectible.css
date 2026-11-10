@@ -38,7 +38,7 @@
   font: 700 10px/1 var(--font-mono); letter-spacing: .16em; text-transform: uppercase;
   color: var(--red); padding-bottom: 10px; border-bottom: 1.5px dashed rgba(32, 23, 46, .35);
 }
-.t-serial { color: var(--ink); }
+.t-serial { color: var(--ink); white-space: nowrap; letter-spacing: .04em; }
 
 /* ---- artwork window ---- */
 .t-art {
@@ -59,18 +59,17 @@
 }
 .t-rays {
   position: absolute; inset: -40%;
-  background: repeating-conic-gradient(from 0deg at 50% 62%, rgba(255, 231, 168, .22) 0 6deg, transparent 6deg 18deg);
+  /* vector sun rays (prints crisp, unlike a conic gradient) */
+  background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' preserveAspectRatio='none'><path fill='%23ffe7a8' fill-opacity='.22' d='M100 124L100.0 -176.0L131.4 -174.4ZM100 124L192.7 -161.3L222.0 -150.1ZM100 124L276.3 -118.7L300.7 -98.9ZM100 124L342.7 -52.3L359.8 -26.0ZM100 124L385.3 31.3L393.4 61.6ZM100 124L400.0 124.0L398.4 155.4ZM100 124L385.3 216.7L374.1 246.0ZM100 124L342.7 300.3L322.9 324.7ZM100 124L276.3 366.7L250.0 383.8ZM100 124L192.7 409.3L162.4 417.4ZM100 124L100.0 424.0L68.6 422.4ZM100 124L7.3 409.3L-22.0 398.1ZM100 124L-76.3 366.7L-100.7 346.9ZM100 124L-142.7 300.3L-159.8 274.0ZM100 124L-185.3 216.7L-193.4 186.4ZM100 124L-200.0 124.0L-198.4 92.6ZM100 124L-185.3 31.3L-174.1 2.0ZM100 124L-142.7 -52.3L-122.9 -76.7ZM100 124L-76.3 -118.7L-50.0 -135.8ZM100 124L7.3 -161.3L37.6 -169.4Z'/></svg>") center / 100% 100% no-repeat;
   animation: rays 40s linear infinite;
 }
 @keyframes rays { to { transform: rotate(360deg); } }
-.t-guitar { position: absolute; width: 30%; right: 4%; bottom: 2%; transform: rotate(24deg); filter: drop-shadow(0 6px 8px rgba(0, 0, 0, .5)); }
-.t-portrait { position: absolute; left: 50%; bottom: 0; width: 84%; height: auto; transform: translateX(-52%); filter: drop-shadow(0 8px 14px rgba(0, 0, 0, .45)); }
-.t-rarity, .t-edition {
+.t-portrait { position: absolute; left: 50%; top: 53%; width: 110%; height: auto; transform: translate(-50%, -50%); filter: drop-shadow(0 8px 14px rgba(0, 0, 0, .45)); }
+.t-rarity {
   position: absolute; top: 30%; font: 700 9px/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase;
   padding: 5px 7px; border-radius: 4px; z-index: 2;
 }
 .t-rarity { left: 8px; color: #2a1c05; background: linear-gradient(135deg, #fff2c4, #e8c36a 50%, #b8892f); box-shadow: 0 2px 6px rgba(0, 0, 0, .4); }
-.t-edition { right: 8px; color: #fff; background: var(--red); }
 
 /* ---- titles ---- */
 .t-title { text-align: center; margin-top: 12px; }
@@ -109,7 +108,9 @@
 .t-admit { font: 400 26px/1 var(--font-display); letter-spacing: .1em; color: var(--red); }
 .t-stub span { font: 700 9px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: #4a3f55; }
 .t-barcode { width: 110px; height: 34px; fill: var(--ink); }
-.t-stub-serial { grid-column: 2; text-align: center; }
+.t-code { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.t-barnum { font: 600 9px/1 var(--font-mono); letter-spacing: .08em; color: var(--ink); }
+@media print { .t-barcode { width: 46mm; height: 12mm; } }
 
 /* ---- holographic foil ---- */
 .t-holo {
@@ -147,6 +148,16 @@
   .ticket-pair { gap: 10mm; }
   .ticket-slot { width: 82mm; break-inside: avoid; }
   .ticket { transform: none !important; box-shadow: 0 0 0 2px #2a1c05, 0 0 0 5px #e8c36a, 0 0 0 7px #8a6420; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .t-holo, .t-rays { display: none; }
+  .t-holo { display: none; }
+  .t-rays { animation: none !important; transform: none !important; } /* sunlight stays, frozen, in the PDF */
+  /* effects that make the PDF flatten into tiles (white seams): plain versions for print */
+  .t-portrait { filter: none !important; }
+  .t-rarity { box-shadow: none !important; }
+  /* solid, untransformed sun: a see-through layer prints in tiles with a seam */
+  .t-sun { -webkit-mask: none !important; mask: none !important; opacity: 1 !important; transform: none !important;
+    left: 11% !important; top: calc(58% - 39% / 1.02) !important;
+    background: radial-gradient(circle, #fde0a2, #f88a4f 70%) !important; }
+  .t-art, .t-art * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .t-perf::after { background: radial-gradient(circle at 0 50%, #fff 9px, transparent 9.5px), radial-gradient(circle at 100% 50%, #fff 9px, transparent 9.5px); }
 }
+

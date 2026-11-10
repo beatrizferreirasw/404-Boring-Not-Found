@@ -6,7 +6,8 @@ Plain HTML, CSS and JavaScript: no build step, no dependencies, no frameworks.
 | Game | Folder | What it is |
 |---|---|---|
 | **Sing It!** (featured) | `karaoke/` | Karaoke to “Sultans of Swing”. Finish the song to unlock the collectible concert tickets. |
-| Record Collector | `memory/` | Memory pairs game |
+| Run to the Stage | `stage/` | 3D runner through the Coliseu Porto: jump, slide and dodge instruments to reach the stage and smash the guitar |
+| Record Collector | `memory/` | Memory pairs game (Easy / Medium / Hard) |
 | Jam Session | `jam/` | Repeat-the-riff game with guitar pedals |
 | Name That Tune | `tune/` | Hear a Dire Straits clip, pick the title before the 15-second timer ends (10 rounds, 4 options) |
 | My Collectibles | `ticket/` | Printable keepsake page for the unlocked tickets |
@@ -24,13 +25,15 @@ Plain HTML, CSS and JavaScript: no build step, no dependencies, no frameworks.
 │   │   ├── registry.js        ← list of games shown on the homepage
 │   │   ├── collectible.config.js  ← text printed on the tickets
 │   │   └── collectible.js     renders the tickets
-│   ├── art/portrait.svg       illustrated portrait used on the tickets
-│   └── audio/                 sultans-of-swing.mp3 (the karaoke song)
+│   ├── art/portrait.png       illustrated portrait used on the tickets
+│   ├── vendor/three.min.js    three.js r128 (3D for Run to the Stage)
+│   └── audio/                 sultans-of-swing.mp3 (karaoke), money-for-nothing.mp3 (runner)
 ├── karaoke/
 │   ├── song.config.js         ← audio path, duration, timing offset
 │   ├── lyrics.js              ← lyrics in LRC format (placeholders by default)
 │   └── index.html, karaoke.css, karaoke.js
 ├── tune/songs.config.js       ← song list, rounds, timer, number of options
+├── stage/                     Run to the Stage (runner.js, stage.css)
 ├── memory/  jam/  ticket/
 ```
 

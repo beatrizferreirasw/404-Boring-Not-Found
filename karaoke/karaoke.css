@@ -230,8 +230,6 @@ body { overflow: hidden; height: 100dvh; display: flex; flex-direction: column; 
 @keyframes deal { from { opacity: 0; transform: translateY(80px) rotate(calc(-14deg + var(--i) * 28deg)) scale(.6); } }
 .reveal-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 30px; animation: rise .6s 1.4s ease both; }
 
-.miss-icon { margin: 0 0 10px; font-size: 72px; filter: drop-shadow(0 0 20px rgba(232, 195, 106, .5)); animation: zoom-in .6s cubic-bezier(.2, 1.4, .4, 1) both; }
-.stage-miss .reveal-actions { animation-delay: .5s; }
 
 /* ---------------- responsive ---------------- */
 @media (max-width: 600px) {

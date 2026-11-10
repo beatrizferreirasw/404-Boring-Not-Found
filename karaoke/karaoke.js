@@ -161,11 +161,11 @@
   }
 
   /* =========================================================== scoring */
-  const game = { score: 0, streak: 1, hype: 0, lineSung: 0, lineTime: 0, linesSung: 0, linesTotal: 0, listened: 0, finished: false };
+  const game = { score: 0, streak: 1, hype: 0, lineSung: 0, lineTime: 0, linesSung: 0, linesTotal: 0, finished: false };
   const mic = { on: false, ctx: null, analyser: null, buf: null, level: 0, stream: null };
 
   function resetGame() {
-    Object.assign(game, { score: 0, streak: 1, hype: 0, lineSung: 0, lineTime: 0, linesSung: 0, linesTotal: 0, listened: 0, finished: false });
+    Object.assign(game, { score: 0, streak: 1, hype: 0, lineSung: 0, lineTime: 0, linesSung: 0, linesTotal: 0, finished: false });
     renderHud();
   }
 
@@ -263,8 +263,6 @@
     }
 
     if (playing && !syncing) scoreTick(dt, t);
-    // Only real-time listening of the actual song counts towards the prize: skipping ahead earns nothing.
-    if (playing && !syncing && mode === "audio") game.listened += dt;
     renderHud();
 
     if (!seeking) {
@@ -494,9 +492,7 @@
   setInterval(() => { if (syncing) updateSync(); }, 250);
 
   /* ===================================================== the surprise */
-  /* The collectible is earned ONLY by singing the song to the end
-     (dragging the progress bar to the end doesn't count). */
-  const REQUIRED_LISTEN = 0.85; // share of the song that must actually be played
+  /* The collectible is earned when the song reaches the end (skipping ahead is allowed). */
   function finish({ preview = false } = {}) {
     if (syncing) { stopSync(true); return; }
     if (game.finished) return;
@@ -504,8 +500,6 @@
     onLineChange(currentIdx, -1);
     player.pause();
 
-    const earned = mode === "audio" && game.listened >= player.duration * REQUIRED_LISTEN;
-    if (!earned && !preview) return showNotEarned();
 
     const frac = game.linesTotal ? game.linesSung / game.linesTotal : 1;
     const stars = mic.on ? 1 + (frac > 0.35) + (frac > 0.7) : 3;
@@ -514,7 +508,6 @@
 
     const reveal = $("reveal");
     ["stage-1", "stage-2", "stage-3"].forEach((id, i) => { $(id).hidden = i !== 0; });
-    $("stage-miss").hidden = true;
     reveal.hidden = false;
     reveal.scrollTop = 0;
     $("final-score").textContent = score.toLocaleString();
@@ -537,16 +530,6 @@
     }, 3600);
 
     $("mystery").onclick = () => openMystery(item);
-  }
-
-  function showNotEarned() {
-    const reveal = $("reveal");
-    ["stage-1", "stage-2", "stage-3"].forEach((id) => { $(id).hidden = true; });
-    $("stage-miss").hidden = false;
-    reveal.hidden = false;
-    reveal.scrollTop = 0;
-    sfx.bad();
-    $("miss-again").focus({ preventScroll: true });
   }
 
   function showRevealText() {
@@ -592,17 +575,8 @@
     }, 1450);
   }
 
-  $("miss-again").addEventListener("click", () => {
-    $("reveal").hidden = true;
-    $("stage-miss").hidden = true;
-    resetGame(); currentIdx = -2;
-    player.seek(0);
-    if (mode === "audio") player.play(); else showStart();
-  });
-
   $("again").addEventListener("click", () => {
     $("reveal").hidden = true;
-    $("stage-miss").hidden = true;
     $("mystery").className = "mystery";
     resetGame(); currentIdx = -2;
     player.seek(0);

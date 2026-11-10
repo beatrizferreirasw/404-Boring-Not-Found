@@ -13,18 +13,16 @@ window.COLLECTIBLE = {
   show: { en: "Great Straits · Live in Porto", pt: "Great Straits · Ao Vivo no Porto" },
   venue: "Coliseu Porto Ageas",
   city: "Porto",
-  hall: { en: "Main Hall", pt: "Sala Principal" },
   date: { en: "28 FEB 2027", pt: "28 FEV 2027" },
   weekday: { en: "Sunday", pt: "Domingo" },
   time: "21:00",
   gate: "1 – 5",
   section: { en: "Orchestra", pt: "Orquestra" },
   edition: { en: "Limited Edition", pt: "Edição Limitada" },
-  editionNote: { en: "1 of 1", pt: "1 de 1" },
   rarity: { en: "Legendary", pt: "Lendário" },
   serialPrefix: "SOS",                     // serial looks like SOS-1978-4821
   serial: "auto",                          // "auto" = generated once when unlocked, or set a fixed one
-  portrait: "assets/art/portrait.svg",     // path from the site root
+  portrait: "assets/art/portrait.png",     // path from the site root
   // Shown in the reveal after the tickets appear.
   revealHeadline: { en: "You're going to the concert!", pt: "Vais ao concerto!" },
   revealMessage: {

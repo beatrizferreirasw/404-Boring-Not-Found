@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Run to the Stage · The Sultan's Arcade</title>
+  <meta name="theme-color" content="#070b1d">
+  <link rel="icon" href="../assets/art/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=Monoton&family=Outfit:wght@400;600;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <link rel="stylesheet" href="stage.css">
+</head>
+<body data-title-key="title.run">
+  <canvas id="scene" aria-hidden="true"></canvas>
+
+  <header class="topbar">
+    <a class="btn" href="../" data-nav data-i18n-attr="aria-label:nav.back">← <span data-i18n="nav.arcade">Arcade</span></a>
+    <span class="spacer"></span>
+    <button class="btn icon" id="pause-btn" type="button" data-i18n-attr="aria-label:r.pause" hidden>
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+    </button>
+    <button class="btn lang" data-lang-toggle type="button">PT</button>
+    <button class="btn icon" data-mute-toggle type="button"></button>
+  </header>
+
+  <!-- in-game HUD -->
+  <div class="hud" id="hud" hidden>
+    <div class="hud-row">
+      <div class="lives" id="lives" data-i18n-attr="aria-label:r.lives" role="img"></div>
+      <div class="track" aria-hidden="true">
+        <div class="track-bar"><i id="track-fill"></i></div>
+        <img class="track-dad" id="track-dad" src="../assets/art/portrait.png" alt="">
+        <span class="track-stage">🎭</span>
+      </div>
+      <div class="picks"><span class="pick-ico" aria-hidden="true"></span><b id="picks">0</b></div>
+    </div>
+    <div class="hud-dist"><b id="dist">0</b> <span data-i18n="r.toStage">m to the stage</span></div>
+  </div>
+  <div class="count" id="count" aria-live="assertive"></div>
+
+  <!-- start -->
+  <section class="panel overlay" id="start">
+    <h1 class="neon" style="--glow: var(--neon-red)" data-i18n="r.title">Run to the Stage!</h1>
+    <p class="lead" data-i18n="r.sub">The show at the Coliseu Porto is about to start — help Dad cross the hall and make it onto the stage!</p>
+    <ul class="howto">
+      <li><span class="keys"><kbd>←</kbd><kbd>→</kbd></span><span data-i18n="r.hLane">change lane</span></li>
+      <li><span class="keys"><kbd>↑</kbd></span><span data-i18n="r.hJump">jump over chairs and amps</span></li>
+      <li><span class="keys"><kbd>↓</kbd></span><span data-i18n="r.hSlide">slide under the keyboards</span></li>
+      <li><span class="keys">🥁</span><span data-i18n="r.hStack">dodge drum kits and speaker columns</span></li>
+    </ul>
+    <p class="touch-tip" data-i18n="r.touch">On a phone: swipe left, right, up or down.</p>
+    <p class="muted" id="best-line"></p>
+    <button class="btn primary big" id="start-btn" type="button" data-i18n="r.start">▶ Start running</button>
+  </section>
+
+  <!-- pause -->
+  <section class="panel overlay" id="paused" hidden>
+    <h2 data-i18n="r.paused">Paused</h2>
+    <button class="btn primary big" id="resume-btn" type="button" data-i18n="r.resume">▶ Keep running</button>
+  </section>
+
+  <!-- game over / win -->
+  <section class="panel overlay" id="end" hidden>
+    <h2 id="end-h"></h2>
+    <p id="end-text"></p>
+    <div class="end-actions">
+      <button class="btn primary big" id="again-btn" type="button" data-i18n="r.again">↻ Run again</button>
+      <a class="btn" href="../" data-nav data-i18n="r.home">Back to the arcade</a>
+    </div>
+  </section>
+
+  <script src="../assets/js/i18n.js"></script>
+  <script src="../assets/js/arcade.js"></script>
+  <script src="../assets/vendor/three.min.js"></script>
+  <script src="runner.js"></script>
+</body>
+</html>

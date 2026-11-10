@@ -9,7 +9,26 @@
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
   /** Returns the saved collectible, or null if it has not been unlocked yet. */
-  function get() { return store.get("collectible", null); }
+  // random letters + digits: a serial can never match a real ticket number
+  function mintSerial() {
+    const ABC = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789", rnd = new Uint32Array(6);
+    if (window.crypto && crypto.getRandomValues) crypto.getRandomValues(rnd); else rnd.forEach((_, i) => (rnd[i] = Math.random() * 1e9));
+    return `${cfg.serialPrefix}-1978-${Array.from(rnd, (n) => ABC[n % ABC.length]).join("")}`;
+  }
+  // a random 13-digit ticket number per seat (made up: it matches no real ticket)
+  function mintNumber() {
+    const rnd = new Uint32Array(13);
+    if (window.crypto && crypto.getRandomValues) crypto.getRandomValues(rnd); else rnd.forEach((_, i) => (rnd[i] = Math.random() * 1e9));
+    return Array.from(rnd, (n, i) => (i === 0 ? 1 + (n % 9) : n % 10)).join("");
+  }
+  function withNumbers(item) {
+    if (item && !(item.numbers && cfg.seats.every((st) => item.numbers[st.label]))) {
+      item.numbers = Object.fromEntries(cfg.seats.map((st) => [st.label, mintNumber()]));
+      store.set("collectible", item);
+    }
+    return item;
+  }
+  function get() { return withNumbers(store.get("collectible", null)); }
 
   /** Unlocks the collectible (once) and returns it. A unique serial is minted on first unlock. */
   function unlock(extra = {}) {
@@ -20,27 +39,26 @@
     }
     let serial = cfg.serial;
     if (!serial || serial === "auto") {
-      const rnd = new Uint32Array(1);
-      (window.crypto || {}).getRandomValues ? crypto.getRandomValues(rnd) : (rnd[0] = Math.random() * 1e9);
-      serial = `${cfg.serialPrefix}-1978-${String(rnd[0] % 10000).padStart(4, "0")}`;
+      serial = mintSerial();
     }
     const item = { serial, unlockedAt: new Date().toISOString(), score: extra.score || 0 };
     store.set("collectible", item);
-    return item;
+    return withNumbers(item);
   }
 
   function save(item) { store.set("collectible", item); }
 
   /** A look at the tickets that is NOT saved (used for the localhost-only test preview). */
   function preview() {
-    return get() || { serial: `${cfg.serialPrefix}-1978-0000`, unlockedAt: new Date().toISOString(), score: 0 };
+    return get() || { serial: `${cfg.serialPrefix}-1978-PREVIEW`, unlockedAt: new Date().toISOString(), score: 0,
+      numbers: Object.fromEntries(cfg.seats.map((st) => [st.label, mintNumber()])) };
   }
 
-  /** Deterministic barcode bars from a string. */
+  /** Random-looking stripes drawn from the (random) ticket number — decoration only. */
   function barcode(text) {
     let x = 0, bars = "";
     let h = 2166136261;
-    for (let i = 0; i < 46; i++) {
+    for (let i = 0; i < 64; i++) {
       h ^= text.charCodeAt(i % text.length) + i; h = Math.imul(h, 16777619) >>> 0;
       const w = 1 + (h % 3);
       if (i % 2 === 0) bars += `<rect x="${x}" width="${w}" height="40"/>`;
@@ -49,24 +67,14 @@
     return `<svg class="t-barcode" viewBox="0 0 ${x} 40" preserveAspectRatio="none" aria-hidden="true">${bars}</svg>`;
   }
 
-  const GUITAR = `<svg class="t-guitar" viewBox="0 0 120 300" aria-hidden="true">
-    <rect x="54" y="20" width="12" height="170" rx="2" fill="#e9d3a6" stroke="#2b1a10" stroke-width="2"/>
-    <path d="M50 4h20l4 22H46z" fill="#e9d3a6" stroke="#2b1a10" stroke-width="2"/>
-    ${[40, 60, 80, 100, 120, 140, 160].map((y) => `<line x1="54" x2="66" y1="${y}" y2="${y}" stroke="#a88b5b" stroke-width="1.5"/>`).join("")}
-    <path d="M60 170c-14 0-22 8-24 18-2 10-14 6-22 16-12 16-10 44 4 62 14 18 50 30 74 14 18-12 22-34 14-50-6-12-2-18 2-26 6-14-4-30-18-28-10 2-14-6-30-6z" fill="#d81f3a" stroke="#2b1a10" stroke-width="3"/>
-    <path d="M44 200c10-8 30-8 40 0l-6 40c-10 8-22 8-32 0z" fill="#f6ead2" stroke="#2b1a10" stroke-width="2"/>
-    <rect x="48" y="210" width="26" height="5" rx="2" fill="#2b1a10"/><rect x="48" y="226" width="26" height="5" rx="2" fill="#2b1a10"/>
-    <rect x="50" y="252" width="22" height="4" fill="#2b1a10"/>
-  </svg>`;
-
   /** HTML for one ticket. root = relative path to the site root ("" or "../"). */
   function ticketHTML(item, seat, index, root = "") {
     const { t, pick } = window.I18n;
-    const serial = `${item.serial}-${String.fromCharCode(65 + index)}`;
+    const serial = (item.numbers && item.numbers[seat.label]) || `${item.serial}-${String.fromCharCode(65 + index)}`;
     const name = esc(pick(cfg.honoree));
     const label = t("c.ticket", { n: seat.label });
     return `
-    <article class="ticket" data-tilt aria-label="${esc(t("c.aria", { artist: cfg.artist, label, serial }))}">
+    <article class="ticket" data-tilt data-seat="${esc(seat.seat)}" aria-label="${esc(t("c.aria", { artist: cfg.artist, label, serial }))}">
       <div class="t-main">
         <header class="t-top">
           <span>★ ${esc(pick(cfg.edition))} ★</span>
@@ -75,10 +83,8 @@
         <div class="t-art">
           <div class="t-sun"></div>
           <div class="t-rays"></div>
-          ${GUITAR}
-          <img class="t-portrait" src="${esc(root + cfg.portrait)}" alt="${esc(t("c.portraitAlt", { name: pick(cfg.honoree) }))}" width="400" height="500">
+          <img class="t-portrait" src="${esc(root + cfg.portrait)}" alt="${esc(t("c.portraitAlt", { name: pick(cfg.honoree) }))}" width="560" height="374">
           <span class="t-rarity">${esc(pick(cfg.rarity))}</span>
-          <span class="t-edition">${esc(pick(cfg.editionNote))}</span>
         </div>
         <div class="t-title">
           <p class="t-present">${esc(pick(cfg.show))}</p>
@@ -92,7 +98,7 @@
           <div><dt>${esc(t("c.gates"))}</dt><dd>${esc(cfg.gate)}</dd></div>
           <div><dt>${esc(t("c.seat"))}</dt><dd>${esc(seat.seat)}</dd></div>
         </dl>
-        <p class="t-venue">${esc(cfg.venue)} · ${esc(pick(cfg.hall))} · ${esc(pick(cfg.section))}</p>
+        <p class="t-venue">${esc(cfg.venue)} · ${esc(pick(cfg.section))}</p>
       </div>
       <div class="t-perf" aria-hidden="true"></div>
       <footer class="t-stub">
@@ -100,8 +106,7 @@
           <strong class="t-admit">${esc(t("c.admit"))}</strong>
           <span>${esc(label)} · ${esc(t("c.seat"))} ${esc(seat.seat)}</span>
         </div>
-        ${barcode(serial)}
-        <span class="t-stub-serial">${esc(serial)}</span>
+        <div class="t-code">${barcode(serial)}<span class="t-barnum">${esc(serial)}</span></div>
       </footer>
       <div class="t-holo" aria-hidden="true"></div>
     </article>`;

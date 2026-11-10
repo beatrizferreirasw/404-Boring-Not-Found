@@ -62,7 +62,6 @@
         document.getElementById("meta").textContent = t("tk.meta", { serial: item.serial, date: when }) + (item.score ? t("tk.best", { score: item.score.toLocaleString(locale()) }) : "");
         actions.innerHTML = `
           <button class="btn gold" type="button" id="print">${t("tk.print")}</button>
-          <a class="btn" href="../${cfg.portrait}" download="portrait.svg">${t("tk.download")}</a>
           <a class="btn" href="../karaoke/" data-nav>${t("tk.again")}</a>`;
         document.getElementById("print").addEventListener("click", () => window.print());
         Arcade.wireLinks(actions);

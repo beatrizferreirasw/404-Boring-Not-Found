@@ -56,6 +56,18 @@ window.GAMES = [
     tags: { en: ["Quiz", "Dire Straits", "Timer"], pt: ["Quiz", "Dire Straits", "Cronómetro"] },
   },
   {
+    id: "stage",
+    title: { en: "Run to the Stage", pt: "Corre até ao Palco" },
+    tagline: {
+      en: "3D run through the Coliseu Porto: jump chairs, slide under keyboards and dodge drum kits to reach the stage.",
+      pt: "Corrida 3D pelo Coliseu Porto: salta cadeiras, desliza por baixo de teclados e foge às baterias até ao palco.",
+    },
+    href: "stage/",
+    emoji: "🏃",
+    accent: "#ffb347",
+    tags: { en: ["3D", "Runner", "Coliseu"], pt: ["3D", "Corrida", "Coliseu"] },
+  },
+  {
     id: "memory",
     title: { en: "Record Collector", pt: "Colecionador de Discos" },
     tagline: { en: "Flip the records and find every matching pair.", pt: "Vira os discos e encontra todos os pares." },
