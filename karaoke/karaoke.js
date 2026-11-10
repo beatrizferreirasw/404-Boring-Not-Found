@@ -97,6 +97,7 @@
       ? lines.map((l) => `<li class="${isInst(l.text) ? "inst" : ""}"><span class="txt">${escapeHtml(l.text || "♪ ♪ ♪")}</span></li>`).join("")
       : `<li class="current inst" lang="${window.I18n.lang}"><span class="txt">${escapeHtml(tr("k.addLyrics"))}</span></li>`;
     currentIdx = -2;
+    if (typeof fitLines === "function") fitLines();
   }
   const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
@@ -112,10 +113,35 @@
     const target = ol.children[Math.max(0, currentIdx)];
     if (target) ol.style.transform = `translateY(${-(target.offsetTop + target.offsetHeight / 2)}px)`;
   }
+  // One line per lyric, always: lines never wrap (CSS nowrap); any line too wide for the screen
+  // at its highlighted size gets a smaller font (--fit) so it fits on one line.
+  const fitProbe = document.createElement("ol");
+  fitProbe.className = "lyrics"; fitProbe.setAttribute("aria-hidden", "true");
+  fitProbe.style.cssText = "visibility:hidden;pointer-events:none;top:0;transition:none";
+  fitProbe.innerHTML = '<li class="current"><span class="txt">x</span></li><li class="current inst"><span class="txt">x</span></li>';
+  ol.parentElement.appendChild(fitProbe);
+  const fitCtx = document.createElement("canvas").getContext("2d");
+  function fitLines() {
+    const view = ol.parentElement.clientWidth;
+    if (!view) return;
+    const fonts = [...fitProbe.children].map((li) => {
+      const cs = getComputedStyle(li);
+      return { font: `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`,
+               avail: view - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) };
+    });
+    for (const li of ol.children) {
+      const f = fonts[li.classList.contains("inst") ? 1 : 0];
+      fitCtx.font = f.font;
+      const w = fitCtx.measureText(li.textContent).width;
+      const fit = Math.min(1, (f.avail * 0.95) / Math.max(1, w));
+      if (fit < 1) li.style.setProperty("--fit", fit.toFixed(3)); else li.style.removeProperty("--fit");
+    }
+  }
+  function relayout() { fitLines(); centerCurrent(); }
   ol.addEventListener("transitionend", (e) => { if (e.propertyName === "font-size") centerCurrent(); });
-  if ("ResizeObserver" in window) new ResizeObserver(() => centerCurrent()).observe(ol.parentElement);
-  addEventListener("orientationchange", () => setTimeout(centerCurrent, 300));
-  document.fonts?.ready.then(centerCurrent);
+  if ("ResizeObserver" in window) new ResizeObserver(relayout).observe(ol.parentElement);
+  addEventListener("orientationchange", () => setTimeout(relayout, 300));
+  document.fonts?.ready.then(relayout);
 
   function setCurrent(idx) {
     if (idx === currentIdx || !lines.length) return;

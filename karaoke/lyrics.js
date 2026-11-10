@@ -4,38 +4,67 @@ window.KARAOKE_LYRICS = String.raw`
 [ar:Dire Straits]
 [00:00.00]♪ Intro — grab the mic! ♪
 [00:12.08]You get a shiver in the dark
-[00:14.53]It's raining in the park but meantime
-[00:19.40]South of the river, you stop and you hold everything
-[00:26.50]A band is blowing Dixie, double-four time
-[00:33.00]You feel alright when you hear the music ring
-[00:42.00]Well, now you step inside, but you don't see too many faces
-[00:49.50]Coming in out of the rain, they hear the jazz go down
+[00:14.53]It's raining in the park
+[00:16.15]but meantime
+[00:19.55]South of the river, you stop
+[00:21.50]and you hold everything
+[00:26.55]A band is blowing Dixie
+[00:29.10]double-four time
+[00:33.00]You feel alright
+[00:34.00]when you hear the music ring
+[00:41.55]Well, now you step inside,
+[00:43.44]but you don't see too many faces
+[00:49.50]Coming in out of the rain,
+[00:51.00]they hear the jazz go down
 [00:56.61]Competition in other places
-[01:02.98]Uh, but the horns they blowin' that sound
+[01:02.98]Uh, but the horns
+[01:03.98]they blowin' that sound
 [01:09.35]Way on down south
-[01:12.54]Way on down south, London town
-[01:27.29]You check out guitar George, he knows all the chords
-[01:34.40]Mind, it's strictly rhythm, he doesn't want to make it cry or sing
-[01:41.70]They said an old guitar is all he can afford
-[01:47.57]When he gets up under the lights to play his thing
-[01:57.30]And Harry doesn't mind if he doesn't make the scene
-[02:03.57]He's got a daytime job, he's doing alright
-[02:10.46]He can play the honky-tonk like anything
-[02:16.76]Savin' it up for Friday night
+[01:12.54]Way on down south,
+[01:14.50]London town
+[01:27.24]You check out guitar George,
+[01:30.29]he knows all the chords
+[01:34.40]Mind, it's strictly rhythm,
+[01:35.40]he doesn't want to make it
+[01:36.55]cry or sing
+[01:41.70]They said an old guitar is all
+[01:44.70]he can afford
+[01:47.57]When he gets up under the lights
+[01:49.00]to play his thing
+[01:57.30]And Harry doesn't mind
+[01:59.30]if he doesn't
+[02:01.00]make the scene
+[02:03.57]He's got a daytime job,
+[02:05.57]he's doing alright
+[02:10.46]He can play the honky-tonk
+[02:12.10]like anything
+[02:16.74]Savin' it up
+[02:18.70]for Friday night
 [02:23.50]With the Sultans
 [02:27.10]We're the Sultans of Swing
-[02:42.15]Then a crowd of young boys, they're foolin' around in the corner
-[02:49.27]Drunk and dressed in their best, brown baggies and their platform soles
-[02:56.05]They don't give a damn about any trumpet playin' band
-[03:02.46]It ain't what they call rock and roll
+[02:42.15]Then a crowd of young boys,
+[02:43.15]they're foolin' around in the corner
+[02:49.27]Drunk and dressed in their best,
+[02:50.27]brown baggies and their platform soles
+[02:56.00]They don't give a damn
+[02:58.05]about any trumpet playin' band
+[03:02.46]It ain't what they call
+[03:04.46]rock and roll
 [03:09.45]And the Sultans
-[03:12.76]Yeah, the Sultans, they play Creole
+[03:12.76]Yeah, the Sultans,
+[03:13.76]they play Creole
 [03:19.00]Creole
 [03:20.00]♪ Guitar solo ♪
-[04:13.56]And then the man, he steps right up to the microphone
-[04:19.75]And says at last, just as the time bell rings
-[04:27.10]"Goodnight, now it's time to go home"
-[04:33.15]Then he makes it fast with one more thing
+[04:13.56]And then the man,
+[04:14.56]he steps right up
+[04:15.56]to the microphone
+[04:19.75]And says at last,
+[04:20.95]just as the time bell rings
+[04:27.10]"Goodnight,
+[04:28.40]now it's time
+[04:30.10]to go home"
+[04:33.15]Then he makes it fast
+[04:34.55]with one more thing
 [04:40.31]"We are the Sultans
 [04:43.51]We are the Sultans of Swing"
 [04:46.00]♪ Guitar fill ♪
