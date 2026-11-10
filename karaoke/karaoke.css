@@ -72,12 +72,16 @@ body { overflow: hidden; height: 100dvh; display: flex; flex-direction: column; 
   /* bigger via font-size (not a zoom), so the line re-wraps instead of spilling past the edges */
   transform: none; filter: none;
   font-size: clamp(21px, 4.2vw, 36px); line-height: 1.2;
-  color: transparent;
+  color: rgba(246, 234, 210, .95);
+}
+/* The gold fill is clipped to the text span itself, with no filter on it or its children:
+   iPhone Safari paints background-clip:text as invisible when a descendant has a filter. */
+.lyrics li.current .txt {
+  color: transparent; -webkit-text-fill-color: transparent;
   background: linear-gradient(90deg, var(--gold) 0 var(--p), rgba(246, 234, 210, .95) var(--p) 100%);
   -webkit-background-clip: text; background-clip: text;
-  text-shadow: none;
+  -webkit-box-decoration-break: slice; box-decoration-break: slice;
 }
-.lyrics li.current .txt { filter: drop-shadow(0 0 18px rgba(232, 195, 106, .35)); }
 .lyrics li.inst { font-family: var(--font-serif); font-style: italic; font-weight: 400; }
 .lyrics li.inst.current { color: var(--neon-blue); background: none; animation: pulse 1.6s ease-in-out infinite; }
 @keyframes pulse { 50% { opacity: .55; } }
@@ -86,6 +90,7 @@ body { overflow: hidden; height: 100dvh; display: flex; flex-direction: column; 
   background: linear-gradient(90deg, transparent, var(--neon-red)); box-shadow: 0 0 10px var(--neon-red);
 }
 .lyrics li.inst.current::after { display: none; }
+.lyrics li.inst.current .txt { background: none; color: var(--neon-blue); -webkit-text-fill-color: var(--neon-blue); }
 
 /* ---------------- deck ---------------- */
 .deck { width: min(720px, 100%); padding: 14px 18px 16px; margin-top: 8px; }
@@ -244,6 +249,14 @@ body { overflow: hidden; height: 100dvh; display: flex; flex-direction: column; 
 @media (max-height: 640px) {
   .sign-sub { display: none; }
   .now { display: none; }
+}
+/* phone held sideways: drop the sign so lyrics and controls both fit */
+@media (max-height: 480px) {
+  .sign { display: none; }
+  .hud { margin: 4px 0 0; }
+  .lyrics-view { min-height: 110px; }
+  .deck { padding: 8px 12px 10px; margin-top: 4px; }
+  .play { width: 52px; height: 52px; }
 }
 
 /* keep the top bar (back, language, sound, local setup) usable above the start screen */

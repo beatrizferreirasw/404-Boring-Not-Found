@@ -106,6 +106,17 @@
     return ans;
   }
 
+  // Keep the current line in the middle of the lyrics area. Re-run whenever line sizes settle
+  // (font-size transition, web fonts, rotation, the phone's address bar showing or hiding).
+  function centerCurrent() {
+    const target = ol.children[Math.max(0, currentIdx)];
+    if (target) ol.style.transform = `translateY(${-(target.offsetTop + target.offsetHeight / 2)}px)`;
+  }
+  ol.addEventListener("transitionend", (e) => { if (e.propertyName === "font-size") centerCurrent(); });
+  if ("ResizeObserver" in window) new ResizeObserver(() => centerCurrent()).observe(ol.parentElement);
+  addEventListener("orientationchange", () => setTimeout(centerCurrent, 300));
+  document.fonts?.ready.then(centerCurrent);
+
   function setCurrent(idx) {
     if (idx === currentIdx || !lines.length) return;
     const prev = currentIdx;
@@ -118,8 +129,7 @@
       li.classList.toggle("near", Math.abs(i - idx) === 1);
       if (i !== idx) li.style.removeProperty("--p");
     }
-    const target = items[Math.max(0, idx)];
-    if (target) ol.style.transform = `translateY(${-(target.offsetTop + target.offsetHeight / 2)}px)`;
+    centerCurrent();
     if (idx >= 0) $("lyric-live").textContent = lines[idx].text;
     onLineChange(prev, idx);
   }
